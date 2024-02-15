@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 
 import secrets
 
+from basic_thread import Basic_Thread
+
 intents = discord.Intents.all()
 intents.messages = True
 
@@ -15,18 +17,19 @@ YOUR_SPECIFIC_CHANNEL_ID=secrets.channel_id
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    check_inactive_users.start()
+    # check_inactive_users.start()
 
     channel = bot.get_channel(YOUR_SPECIFIC_CHANNEL_ID)
-    threads = [thread for thread in channel.threads]
-    messages = []
-    for thread in threads:
-        messages += [message async for message in thread.history(after=None)]
-        # after (Optional[Union[Snowflake, datetime.datetime]]) – Retrieve messages after this date or message. If a datetime is provided, it is recommended to use a UTC aware datetime. If the datetime is naive, it is assumed to be local time.
-
-    with open('exported_history.txt', 'w', encoding='utf-8') as file:
-        for message in messages:
-            file.write(f"{message.author.display_name} ({message.author}): {message.content}\n")
+    data = {}
+    for thread in channel.threads:
+        print(f"Processing Thread {thread.name}")
+        # data.update({thread.name:{"thread": thread, "messages": [message async for message in thread.history(after=None)]}})
+        data.update({thread.name: Basic_Thread(thread, [message async for message in thread.history(after=None)] )})
+    async for thread in channel.archived_threads(limit=9999):
+        print(f"Processing Thread {thread.name}")
+        # data.update({thread.name:{"thread": thread, "messages": [message async for message in thread.history(after=None)]}})
+        data.update({thread.name: Basic_Thread(thread, [message async for message in thread.history(after=None)])})
+    data
 
 
 @bot.event
@@ -44,9 +47,9 @@ async def on_message(message):
         print("Break")
 
 
-@tasks.loop(seconds=3)  # Adjust the loop interval as needed
-async def check_inactive_users():
-    pass
+# @tasks.loop(seconds=3)  # Adjust the loop interval as needed
+# async def check_inactive_users():
+#     pass
     # print("test")
     # for user_id, data in database.copy().items():
     #     last_response_time = data['last_response']
@@ -67,8 +70,8 @@ async def check_inactive_users():
     #         del database[user_id]
 
 
-@check_inactive_users.before_loop
-async def before_check_inactive_users():
-    await bot.wait_until_ready()
+# @check_inactive_users.before_loop
+# async def before_check_inactive_users():
+#     await bot.wait_until_ready()
 
 bot.run(secrets.bot_token)
