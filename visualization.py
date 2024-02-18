@@ -10,11 +10,39 @@ class Quest:
         self.adventure_date = adventure_date
 
 
+import pickle
+
+
+def load_info():
+    filename = "thread_data.pkl"
+    with open(filename, 'rb') as f:
+        data = pickle.load(f)
+    return data
+
+
+def organize_by_author(thread_lists):
+    for thread in thread_lists:
+        thread_lists[thread].messages.update({
+            thread :
+            {
+                author: [message
+                         for message in thread_lists['Tuesday 2/13 @7pm Lvls 5-7'].messages
+                         if message["author"] == author
+                         ]
+                for author in set([
+                msg["author"]
+                for msg in thread_lists['Tuesday 2/13 @7pm Lvls 5-7'].messages])
+            }
+        })
+
+    return thread_lists
+
+
 def generate_quest_objects():
     with open("thread_data.pkl", "rb") as f:
         data = pickle.load(f)
 
-    pattern = "le?ve?ls? ?(\d)-?(?:(\d)|\+)"
+    pattern = r"le?ve?ls? ?(\d)-?(?:(\d)|\+)"
 
     quest_objs = []
 
@@ -33,7 +61,9 @@ def generate_quest_objects():
 
     return quest_objs
 
+
 import matplotlib.pyplot as plt
+
 
 def generate_level_histograms():
     quest_objs = generate_quest_objects()
@@ -54,13 +84,7 @@ def generate_level_histograms():
 
     print("Done")
 
-
-
-
 # level_ranges = [re.findall(pattern, quest, re.IGNORECASE)[0] for quest in data if
 #                 re.search(pattern, quest, re.IGNORECASE)]
 # level_ranges = [range(level_range[0], level_range[1]) if level_range[1] else range(level_range[0], 12)
 #                 for level_range in level_ranges]
-
-
-generate_level_histograms()
