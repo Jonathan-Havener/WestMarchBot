@@ -1,4 +1,3 @@
-import pickle
 import re
 
 
@@ -11,31 +10,11 @@ class Quest:
 
 
 import pickle
-
-
 def load_info():
     filename = "thread_data.pkl"
     with open(filename, 'rb') as f:
         data = pickle.load(f)
     return data
-
-
-def organize_by_author(thread_lists):
-    for thread in thread_lists:
-        thread_lists[thread].messages.update({
-            thread :
-            {
-                author: [message
-                         for message in thread_lists['Tuesday 2/13 @7pm Lvls 5-7'].messages
-                         if message["author"] == author
-                         ]
-                for author in set([
-                msg["author"]
-                for msg in thread_lists['Tuesday 2/13 @7pm Lvls 5-7'].messages])
-            }
-        })
-
-    return thread_lists
 
 
 def generate_quest_objects():
@@ -63,8 +42,6 @@ def generate_quest_objects():
 
 
 import matplotlib.pyplot as plt
-
-
 def generate_level_histograms():
     quest_objs = generate_quest_objects()
     levels = [(num, quest.adventure_date) for quest in quest_objs for num in quest.level_range]

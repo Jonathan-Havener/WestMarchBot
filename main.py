@@ -1,10 +1,9 @@
 import discord
-from discord.ext import commands, tasks
-from datetime import datetime, timedelta
+from discord.ext import commands
 
-import secrets
-
+import secrets_config
 from basic_thread import Basic_Thread
+import pickle
 
 intents = discord.Intents.all()
 intents.messages = True
@@ -12,7 +11,7 @@ intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 database = {}  # Your database (e.g., could be a dictionary)
 
-YOUR_SPECIFIC_CHANNEL_ID=secrets.channel_id
+YOUR_SPECIFIC_CHANNEL_ID=secrets_config.channel_id
 
 @bot.event
 async def on_ready():
@@ -29,8 +28,9 @@ async def on_ready():
         print(f"Processing Thread {thread.name}")
         # data.update({thread.name:{"thread": thread, "messages": [message async for message in thread.history(after=None)]}})
         data.update({thread.name: Basic_Thread(thread, [message async for message in thread.history(after=None)])})
-    data
-
+    # Save the data
+    with open('data.pkl', 'wb') as f:
+        pickle.dump(data, f)
 
 @bot.event
 async def on_message(message):
@@ -74,4 +74,4 @@ async def on_message(message):
 # async def before_check_inactive_users():
 #     await bot.wait_until_ready()
 
-bot.run(secrets.bot_token)
+bot.run(secrets_config.bot_token)
