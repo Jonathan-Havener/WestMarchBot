@@ -42,6 +42,10 @@ class Basic_Thread():
         return set([msg["author"] for msg in self.messages])
 
     @property
+    def players(self):
+        return set([msg["author"] for msg in self.messages if msg["author"] != self.owner])
+
+    @property
     def messages_by_author(self):
         msg_by_author = {}
         for author in self.members:
@@ -51,52 +55,60 @@ class Basic_Thread():
             msg_by_author[author].append(message)
         return msg_by_author
 
-    @property
-    def member_levels(self):
-        author_levels = {}
-        msgs_by_author = self.messages_by_author
-        for author_msgs in msgs_by_author:
-            author = msgs_by_author[author_msgs][0]["author"]
-            if author == self.owner:
-                # The creator of a thread won't have a character level
-                continue
-            level = self.get_player_level_from_msg_list(msgs_by_author[author_msgs])
-            author_levels.update({author: level})
-        return author_levels
+    def player_messages(self, player) -> list:
+        messages = []
+        for message in self.messages:
+            author = message["author"]
+            if author == player:
+                messages.append(message)
+        return messages
 
-    def get_player_level_from_msg_list(self, msg_list):
-        level_pattern = r"le?ve?l ?(?P<level>\d)"
-        level = None
-        for msg in msg_list:
-            if not msg["content"]:
-                continue
-            res = re.findall(level_pattern, msg["content"], re.IGNORECASE)
-            if res:
-                res = [int(num) for num in res]
-                level = sum(res)
-                break
+    # @property
+    # def member_levels(self):
+    #     author_levels = {}
+    #     msgs_by_author = self.messages_by_author
+    #     for author_msgs in msgs_by_author:
+    #         author = msgs_by_author[author_msgs][0]["author"]
+    #         if author == self.owner:
+    #             # The creator of a thread won't have a character level
+    #             continue
+    #         level = self.get_player_level_from_msg_list(msgs_by_author[author_msgs])
+    #         author_levels.update({author: level})
+    #     return author_levels
+    #
+    # def get_player_level_from_msg_list(self, msg_list):
+    #     level_pattern = r"le?ve?l ?(?P<level>\d)"
+    #     level = None
+    #     for msg in msg_list:
+    #         if not msg["content"]:
+    #             continue
+    #         res = re.findall(level_pattern, msg["content"], re.IGNORECASE)
+    #         if res:
+    #             res = [int(num) for num in res]
+    #             level = sum(res)
+    #             break
+    #
+    #     if level is None:
+    #         self.logger.debug(f"Could not find level for {msg_list[0]['author']} from {[msg['content'] for msg in msg_list]}")
+    #     return level
 
-        if level is None:
-            self.logger.debug(f"Could not find level for {msg_list[0]['author']} from {[msg['content'] for msg in msg_list]}")
-        return level
-
-from collections import OrderedDict
-def get_player_histories(thread_history):
-    player_history = {}
-    for thread in thread_history:
-        mem_levels = thread_history[thread].member_levels
-        for player in mem_levels:
-            hist_obj = {
-                thread_history[thread].created_at: {
-                    "level": mem_levels[player],
-                    "thread": thread
-                }
-            }
-            if player not in player_history:
-                player_history[player] = hist_obj
-            player_history[player].update(hist_obj)
-
-    player_history = OrderedDict(sorted(player_history.items()))
-    for player in player_history:
-        player_history[player] = OrderedDict(sorted(player_history[player].items()))
-    return player_history
+# from collections import OrderedDict
+# def get_player_histories(thread_history):
+#     player_history = {}
+#     for thread in thread_history:
+#         mem_levels = thread_history[thread].member_levels
+#         for player in mem_levels:
+#             hist_obj = {
+#                 thread_history[thread].created_at: {
+#                     "level": mem_levels[player],
+#                     "thread": thread
+#                 }
+#             }
+#             if player not in player_history:
+#                 player_history[player] = hist_obj
+#             player_history[player].update(hist_obj)
+#
+#     player_history = OrderedDict(sorted(player_history.items()))
+#     for player in player_history:
+#         player_history[player] = OrderedDict(sorted(player_history[player].items()))
+#     return player_history
