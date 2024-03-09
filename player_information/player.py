@@ -1,25 +1,32 @@
 from .character import Character
 import logging
 
+
 # This is the caretaker part of the Memento pattern
 class Player:
+    table = "players"
+
     def __init__(self) -> None:
         self.player_name = None
         self.discord_tag = None
-        # These are the originators
-        self._characters = []
-        # These are the mementos
-        self._adventure_history = []
+        # originator : memento
+        self._characters = {}
 
     def add_character(self, character: Character) -> None:
-        if character.name in [pc.name for pc in self._characters]:
+        if character.name in [self._characters[pc]["obj"].name for pc in self._characters]:
             logging.debug(f"Tried adding {character.name} to {self.player_name or self.discord_tag} but that character "
                           f"already exists!")
             return
-        self._characters.append(character)
+        self._characters.update({
+            character.name: {
+                "obj": character,
+                "history": []
+            }
+        })
 
     def get_character(self, name):
-        matched_characters=[character for character in self._characters if character.name == name]
+        matched_characters = [self._characters[character]["obj"] for character in self._characters
+                              if self._characters[character]["obj"] == name]
         if matched_characters:
             return matched_characters[0]
         return None
@@ -31,8 +38,9 @@ class Player:
         :rtype:
         """
         for character in self._characters:
-            if character.has_unsaved_changes:
-                self._adventure_history.append(character.save())
+            if self._characters[character]["obj"].has_unsaved_changes:
+                character_memento = self._characters[character]["obj"].save(self.player_name, self.discord_tag)
+                self._characters[character]["history"].append(character_memento)
 
     def show_history(self) -> None:
         """
@@ -40,7 +48,9 @@ class Player:
         :return:
         :rtype:
         """
-        for adventure in self._adventure_history:
-            print(adventure)
-
-
+        from .character_database_interface import CharacterDBI, QuestDBI, MemoryDBI, ExperienceDBI, Session
+        session = Session()
+        characters = session.query(CharacterDBI).all()
+        print(characters)
+        session.commit()
+        session.close()

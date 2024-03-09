@@ -19,10 +19,13 @@ class AdventureMuncher:
                 player.discord_tag = gamer_tag
                 player_list.append(player)
 
-            # We don't know the characters name yet, so just give it the discord tag for now.
-            player.add_character(character=Character(name=gamer_tag))
+            character = player.get_character(gamer_tag)
+            if not character:
+                # We don't know the characters name yet, so just give it the discord tag for now.
+                character = Character(name=gamer_tag)
+                player.add_character(character=character)
 
-            player.get_character(gamer_tag).go_on_adventure(quest_name=adventure.name,
+            character.go_on_adventure(quest_name=adventure.name,
                                adventure_date=adventure.created_at,
                                adventurer_messages=adventure.player_messages(gamer_tag))
 
@@ -44,4 +47,5 @@ if __name__ == "__main__":
     for adventure_name in data:
         players = AdventureMuncher().update_players_from_adventure(data[adventure_name], players)
 
-    print(players)
+    print(players[0].show_history())
+    print("done")
