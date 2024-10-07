@@ -1,0 +1,379 @@
+Item,Rarity,Type,Attune?,Random Price,Average Price,Mark Up,Impact,Min Price,Max Price,Num Dice,Dice Face,Adder,Multiplier
+Armor of invulnerability,Legendary,Armor,Yes,175000,175000,0%,Major,50000,300000,2,6,0,25000
+"Armor, +3",Legendary,Armor,No,200000,175000,14%,Major,50000,300000,2,6,0,25000
+Efreeti chain,Legendary,Armor,Yes,300000,175000,71%,Major,50000,300000,2,6,0,25000
+Plate armor of etherealness,Legendary,Armor,Yes,200000,175000,14%,Major,50000,300000,2,6,0,25000
+Armor of resistance,Rare,Armor,Yes,12000,11000,9%,Major,2000,20000,2,10,0,1000
+Armor of vulnerability,Rare,Armor,Yes,17000,11000,55%,Major,2000,20000,2,10,0,1000
+"Armor, +1",Rare,Armor,No,17000,11000,55%,Major,2000,20000,2,10,0,1000
+Arrow-catching shield,Rare,Armor,Yes,15000,11000,36%,Major,2000,20000,2,10,0,1000
+Elven chain,Rare,Armor,No,9000,11000,-18%,Major,2000,20000,2,10,0,1000
+Glamoured studded leather,Rare,Armor,No,14000,11000,27%,Major,2000,20000,2,10,0,1000
+Shield of missile attraction,Rare,Armor,Yes,11000,11000,0%,Major,2000,20000,2,10,0,1000
+"Shield, +2",Rare,Armor,No,18000,11000,64%,Major,2000,20000,2,10,0,1000
+Adamantine armor,Uncommon,Armor,No,400,350,14%,Major,100,600,1,6,0,100
+Sentinel shield,Uncommon,Armor,No,100,350,-71%,Major,100,600,1,6,0,100
+"Shield, +1",Uncommon,Armor,No,200,350,-43%,Major,100,600,1,6,0,100
+Animated shield,Very Rare,Armor,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+"Armor, +2",Very Rare,Armor,No,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Demon armor,Very Rare,Armor,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Dragon scale mail,Very Rare,Armor,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Dwarven plate,Very Rare,Armor,No,50000,35000,43%,Major,20000,50000,1,4,1,10000
+"Shield, +3",Very Rare,Armor,No,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Spellguard shield,Very Rare,Armor,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Ring of air elemental command,Legendary,Ring,Yes,100000,175000,-43%,Major,50000,300000,2,6,0,25000
+Ring of djinni summoning,Legendary,Ring,Yes,125000,175000,-29%,Major,50000,300000,2,6,0,25000
+Ring of earth elemental command,Legendary,Ring,Yes,225000,175000,29%,Major,50000,300000,2,6,0,25000
+Ring of fire elemental command,Legendary,Ring,Yes,100000,175000,-43%,Major,50000,300000,2,6,0,25000
+Ring of invisibility,Legendary,Ring,Yes,200000,175000,14%,Major,50000,300000,2,6,0,25000
+Ring of spell turning,Legendary,Ring,Yes,125000,175000,-29%,Major,50000,300000,2,6,0,25000
+Ring of three wishes,Legendary,Ring,No,250000,175000,43%,Major,50000,300000,2,6,0,25000
+Ring of water elemental command,Legendary,Ring,Yes,300000,175000,71%,Major,50000,300000,2,6,0,25000
+Ring of animal influence,Rare,Ring,No,16000,11000,45%,Major,2000,20000,2,10,0,1000
+Ring of evasion,Rare,Ring,Yes,11000,11000,0%,Major,2000,20000,2,10,0,1000
+Ring of feather falling,Rare,Ring,Yes,8000,11000,-27%,Major,2000,20000,2,10,0,1000
+Ring of free action,Rare,Ring,Yes,15000,11000,36%,Major,2000,20000,2,10,0,1000
+Ring of protection,Rare,Ring,Yes,20000,11000,82%,Major,2000,20000,2,10,0,1000
+Ring of resistance,Rare,Ring,Yes,13000,11000,18%,Major,2000,20000,2,10,0,1000
+Ring of spell storing,Rare,Ring,Yes,5000,11000,-55%,Major,2000,20000,2,10,0,1000
+Ring of the ram,Rare,Ring,Yes,12000,11000,9%,Major,2000,20000,2,10,0,1000
+Ring of X-ray vision,Rare,Ring,Yes,11000,11000,0%,Major,2000,20000,2,10,0,1000
+Ring of jumping,Uncommon,Ring,Yes,400,350,14%,Major,100,600,1,6,0,100
+Ring of mind shielding,Uncommon,Ring,Yes,100,350,-71%,Major,100,600,1,6,0,100
+Ring of warmth,Uncommon,Ring,Yes,400,350,14%,Major,100,600,1,6,0,100
+Ring of water walking,Uncommon,Ring,No,500,350,43%,Major,100,600,1,6,0,100
+Ring of regeneration,Very Rare,Ring,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Ring of shooting stars,Very Rare,Ring,Yes (outdoors at night),50000,35000,43%,Major,20000,50000,1,4,1,10000
+Ring of telekinesis,Very Rare,Ring,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Rod of lordly might,Legendary,Rod,Yes,200000,175000,14%,Major,50000,300000,2,6,0,25000
+Rod of resurrection,Legendary,Rod,"Yes (cleric, druid, or paladin)",275000,175000,57%,Major,50000,300000,2,6,0,25000
+Rod of rulership,Rare,Rod,Yes,17000,11000,55%,Major,2000,20000,2,10,0,1000
+"Rod of the pact keeper, +2",Rare,Rod,Yes (warlock),15000,11000,36%,Major,2000,20000,2,10,0,1000
+Tentacle rod,Rare,Rod,Yes,14000,11000,27%,Major,2000,20000,2,10,0,1000
+"Rod of the pact keeper, +1",Uncommon,Rod,Yes (warlock),100,350,-71%,Major,100,600,1,6,0,100
+Rod of absorption,Very Rare,Rod,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Rod of alertness,Very Rare,Rod,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Rod of security,Very Rare,Rod,No,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+"Rod of the pact keeper, +3",Very Rare,Rod,Yes (warlock),40000,35000,14%,Major,20000,50000,1,4,1,10000
+Staff of the magi,Legendary,Staff,"Yes (sorcerer, warlock, or wizard)",175000,175000,0%,Major,50000,300000,2,6,0,25000
+Staff of charming,Rare,Staff,"Yes (bard, cleric, druid, sorcerer, warlock, or wizard)",17000,11000,55%,Major,2000,20000,2,10,0,1000
+Staff of healing,Rare,Staff,"Yes (bard, cleric, or druid)",7000,11000,-36%,Major,2000,20000,2,10,0,1000
+Staff of swarming insects,Rare,Staff,"Yes (bard, cleric, druid, sorcerer, warlock, or wizard)",3000,11000,-73%,Major,2000,20000,2,10,0,1000
+Staff of the woodlands,Rare,Staff,Yes (druid),10000,11000,-9%,Major,2000,20000,2,10,0,1000
+Staff of withering,Rare,Staff,"Yes (cleric, druid, or warlock)",6000,11000,-45%,Major,2000,20000,2,10,0,1000
+Staff of the adder,Uncommon,Staff,"Yes (cleric, druid, or warlock)",300,350,-14%,Major,100,600,1,6,0,100
+Staff of the python,Uncommon,Staff,"Yes (cleric, druid, or warlock)",100,350,-71%,Major,100,600,1,6,0,100
+Staff of fire,Very Rare,Staff,"Yes (druid, sorcerer, warlock, or wizard)",50000,35000,43%,Major,20000,50000,1,4,1,10000
+Staff of frost,Very Rare,Staff,"Yes (druid, sorcerer, warlock, or wizard)",40000,35000,14%,Major,20000,50000,1,4,1,10000
+Staff of power,Very Rare,Staff,"Yes (sorcerer, warlock, or wizard)",40000,35000,14%,Major,20000,50000,1,4,1,10000
+Staff of striking,Very Rare,Staff,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Staff of thunder and lightning,Very Rare,Staff,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Wand of binding,Rare,Wand,Yes (spellcaster),9000,11000,-18%,Major,2000,20000,2,10,0,1000
+Wand of enemy detection,Rare,Wand,Yes,6000,11000,-45%,Major,2000,20000,2,10,0,1000
+Wand of fear,Rare,Wand,Yes,12000,11000,9%,Major,2000,20000,2,10,0,1000
+Wand of fireballs,Rare,Wand,Yes (spellcaster),14000,11000,27%,Major,2000,20000,2,10,0,1000
+Wand of lightning bolts,Rare,Wand,Yes (spellcaster),5000,11000,-55%,Major,2000,20000,2,10,0,1000
+Wand of paralysis,Rare,Wand,Yes (spellcaster),10000,11000,-9%,Major,2000,20000,2,10,0,1000
+"Wand of the war mage, +2",Rare,Wand,Yes (spellcaster),12000,11000,9%,Major,2000,20000,2,10,0,1000
+Wand of wonder,Rare,Wand,Yes (spellcaster),7000,11000,-36%,Major,2000,20000,2,10,0,1000
+Wand of magic missiles,Uncommon,Wand,No,500,350,43%,Major,100,600,1,6,0,100
+"Wand of the war mage, +1",Uncommon,Wand,Yes (spellcaster),400,350,14%,Major,100,600,1,6,0,100
+Wand of web,Uncommon,Wand,Yes (spellcaster),400,350,14%,Major,100,600,1,6,0,100
+Wand of polymorph,Very Rare,Wand,Yes (spellcaster),50000,35000,43%,Major,20000,50000,1,4,1,10000
+"Wand of the war mage, +3",Very Rare,Wand,Yes (spellcaster),50000,35000,43%,Major,20000,50000,1,4,1,10000
+Defender,Legendary,Weapon,Yes,250000,175000,43%,Major,50000,300000,2,6,0,25000
+Hammer of thunderbolts,Legendary,Weapon,Yes (Giant’s Bane),150000,175000,-14%,Major,50000,300000,2,6,0,25000
+Holy avenger,Legendary,Weapon,Yes (paladin),175000,175000,0%,Major,50000,300000,2,6,0,25000
+Luck blade,Legendary,Weapon,Yes,225000,175000,29%,Major,50000,300000,2,6,0,25000
+Sword of answering,Legendary,Weapon,Yes (creature of same alignment as sword),175000,175000,0%,Major,50000,300000,2,6,0,25000
+Vorpal sword,Legendary,Weapon,Yes,175000,175000,0%,Major,50000,300000,2,6,0,25000
+Berserker axe,Rare,Weapon,Yes,16000,11000,45%,Major,2000,20000,2,10,0,1000
+Dagger of venom,Rare,Weapon,No,14000,11000,27%,Major,2000,20000,2,10,0,1000
+Dragon slayer,Rare,Weapon,No,10000,11000,-9%,Major,2000,20000,2,10,0,1000
+Flame tongue,Rare,Weapon,Yes,12000,11000,9%,Major,2000,20000,2,10,0,1000
+Giant slayer,Rare,Weapon,No,8000,11000,-27%,Major,2000,20000,2,10,0,1000
+Mace of disruption,Rare,Weapon,Yes,7000,11000,-36%,Major,2000,20000,2,10,0,1000
+Mace of smiting,Rare,Weapon,No,16000,11000,45%,Major,2000,20000,2,10,0,1000
+Mace of terror,Rare,Weapon,Yes,14000,11000,27%,Major,2000,20000,2,10,0,1000
+Sun blade,Rare,Weapon,Yes,11000,11000,0%,Major,2000,20000,2,10,0,1000
+Sword of life stealing,Rare,Weapon,Yes,6000,11000,-45%,Major,2000,20000,2,10,0,1000
+Sword of wounding,Rare,Weapon,Yes,10000,11000,-9%,Major,2000,20000,2,10,0,1000
+Vicious weapon,Rare,Weapon,No,17000,11000,55%,Major,2000,20000,2,10,0,1000
+"Weapon, +2",Rare,Weapon,No,13000,11000,18%,Major,2000,20000,2,10,0,1000
+Javelin of lightning,Uncommon,Weapon,No,100,350,-71%,Major,100,600,1,6,0,100
+Sword of vengeance,Uncommon,Weapon,Yes,600,350,71%,Major,100,600,1,6,0,100
+Trident of fish command,Uncommon,Weapon,Yes,500,350,43%,Major,100,600,1,6,0,100
+Weapon of warning,Uncommon,Weapon,Yes,600,350,71%,Major,100,600,1,6,0,100
+"Weapon, +1",Uncommon,Weapon,No,300,350,-14%,Major,100,600,1,6,0,100
+Dancing sword,Very Rare,Weapon,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Dwarven thrower,Very Rare,Weapon,Yes (dwarf),30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Frost brand,Very Rare,Weapon,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Nine lives stealer,Very Rare,Weapon,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Oathbow,Very Rare,Weapon,Yes,30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Scimitar of speed,Very Rare,Weapon,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Sword of sharpness,Very Rare,Weapon,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+"Weapon, +3",Very Rare,Weapon,No,30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Apparatus of Kwalish,Legendary,Wondrous item,No,50000,175000,-71%,Major,50000,300000,2,6,0,25000
+Belt of cloud giant strength,Legendary,Wondrous item,Yes,200000,175000,14%,Major,50000,300000,2,6,0,25000
+Belt of storm giant strength,Legendary,Wondrous item,Yes,175000,175000,0%,Major,50000,300000,2,6,0,25000
+Cloak of invisibility,Legendary,Wondrous item,Yes,200000,175000,14%,Major,50000,300000,2,6,0,25000
+Crystal ball (legendary),Legendary,Wondrous item,Yes,75000,175000,-57%,Major,50000,300000,2,6,0,25000
+Cubic gate,Legendary,Wondrous item,No,225000,175000,29%,Major,50000,300000,2,6,0,25000
+Deck of many things,Legendary,Wondrous item,No,300000,175000,71%,Major,50000,300000,2,6,0,25000
+Horn of Valhalla (iron),Legendary,Wondrous item,No,225000,175000,29%,Major,50000,300000,2,6,0,25000
+Instrument of the bards (Ollamh harp),Legendary,Wondrous item,Yes (bard),150000,175000,-14%,Major,50000,300000,2,6,0,25000
+Ioun stone (greater absorption),Legendary,Wondrous item,Yes,250000,175000,43%,Major,50000,300000,2,6,0,25000
+Ioun stone (mastery),Legendary,Wondrous item,Yes,250000,175000,43%,Major,50000,300000,2,6,0,25000
+Ioun stone (regeneration),Legendary,Wondrous item,Yes,175000,175000,0%,Major,50000,300000,2,6,0,25000
+Iron flask,Legendary,Wondrous item,No,150000,175000,-14%,Major,50000,300000,2,6,0,25000
+Robe of the archmagi,Legendary,Wondrous item,"Yes (sorcerer, warlock, or wizard)",175000,175000,0%,Major,50000,300000,2,6,0,25000
+Scarab of protection,Legendary,Wondrous item,Yes,150000,175000,-14%,Major,50000,300000,2,6,0,25000
+Sphere of annihilation,Legendary,Wondrous item,No,225000,175000,29%,Major,50000,300000,2,6,0,25000
+Talisman of pure good,Legendary,Wondrous item,Yes (creature of good alignment),75000,175000,-57%,Major,50000,300000,2,6,0,25000
+Talisman of the sphere,Legendary,Wondrous item,Yes,175000,175000,0%,Major,50000,300000,2,6,0,25000
+Talisman of ultimate evil,Legendary,Wondrous item,Yes (creature of evil alignment),175000,175000,0%,Major,50000,300000,2,6,0,25000
+Tome of the stilled tongue,Legendary,Wondrous item,Yes (wizard),175000,175000,0%,Major,50000,300000,2,6,0,25000
+Well of many worlds,Legendary,Wondrous item,No,50000,175000,-71%,Major,50000,300000,2,6,0,25000
+Amulet of health,Rare,Wondrous item,Yes,19000,11000,73%,Major,2000,20000,2,10,0,1000
+Belt of dwarvenkind,Rare,Wondrous item,Yes,8000,11000,-27%,Major,2000,20000,2,10,0,1000
+Belt of hill giant strength,Rare,Wondrous item,Yes,11000,11000,0%,Major,2000,20000,2,10,0,1000
+Boots of levitation,Rare,Wondrous item,Yes,2000,11000,-82%,Major,2000,20000,2,10,0,1000
+Boots of speed,Rare,Wondrous item,Yes,19000,11000,73%,Major,2000,20000,2,10,0,1000
+Bowl of commanding water elementals,Rare,Wondrous item,No,4000,11000,-64%,Major,2000,20000,2,10,0,1000
+Bracers of defense,Rare,Wondrous item,Yes,14000,11000,27%,Major,2000,20000,2,10,0,1000
+Brazier of commanding fire elementals,Rare,Wondrous item,No,17000,11000,55%,Major,2000,20000,2,10,0,1000
+Cape of the mountebank,Rare,Wondrous item,No,12000,11000,9%,Major,2000,20000,2,10,0,1000
+Censer of controlling air elementals,Rare,Wondrous item,No,11000,11000,0%,Major,2000,20000,2,10,0,1000
+Cloak of displacement,Rare,Wondrous item,Yes,10000,11000,-9%,Major,2000,20000,2,10,0,1000
+Cloak of the bat,Rare,Wondrous item,Yes,11000,11000,0%,Major,2000,20000,2,10,0,1000
+Cube of force,Rare,Wondrous item,Yes,4000,11000,-64%,Major,2000,20000,2,10,0,1000
+Daern’s instant fortress,Rare,Wondrous item,No,17000,11000,55%,Major,2000,20000,2,10,0,1000
+Dimensional shackles,Rare,Wondrous item,No,12000,11000,9%,Major,2000,20000,2,10,0,1000
+Figurine of wondrous power (bronze griffon),Rare,Wondrous item,No,15000,11000,36%,Major,2000,20000,2,10,0,1000
+Figurine of wondrous power (ebony fly),Rare,Wondrous item,No,14000,11000,27%,Major,2000,20000,2,10,0,1000
+Figurine of wondrous power (golden lions),Rare,Wondrous item,No,13000,11000,18%,Major,2000,20000,2,10,0,1000
+Figurine of wondrous power (ivory goats),Rare,Wondrous item,No,3000,11000,-73%,Major,2000,20000,2,10,0,1000
+Figurine of wondrous power (marble elephant),Rare,Wondrous item,No,14000,11000,27%,Major,2000,20000,2,10,0,1000
+Figurine of wondrous power (onyx dog),Rare,Wondrous item,No,13000,11000,18%,Major,2000,20000,2,10,0,1000
+Figurine of wondrous power (serpentine owl),Rare,Wondrous item,No,18000,11000,64%,Major,2000,20000,2,10,0,1000
+Gem of seeing,Rare,Wondrous item,Yes,17000,11000,55%,Major,2000,20000,2,10,0,1000
+Helm of teleportation,Rare,Wondrous item,Yes,8000,11000,-27%,Major,2000,20000,2,10,0,1000
+Horn of blasting,Rare,Wondrous item,No,9000,11000,-18%,Major,2000,20000,2,10,0,1000
+Horn of Valhalla (silver or brass),Rare,Wondrous item,No,10000,11000,-9%,Major,2000,20000,2,10,0,1000
+Instrument of the bards (Canaith mandolin),Rare,Wondrous item,Yes (bard),16000,11000,45%,Major,2000,20000,2,10,0,1000
+Instrument of the bards (Cli lyre),Rare,Wondrous item,Yes (bard),4000,11000,-64%,Major,2000,20000,2,10,0,1000
+Ioun stone (awareness),Rare,Wondrous item,Yes,17000,11000,55%,Major,2000,20000,2,10,0,1000
+Ioun stone (protection),Rare,Wondrous item,Yes,5000,11000,-55%,Major,2000,20000,2,10,0,1000
+Ioun stone (reserve),Rare,Wondrous item,Yes,9000,11000,-18%,Major,2000,20000,2,10,0,1000
+Ioun stone (sustenance),Rare,Wondrous item,Yes,3000,11000,-73%,Major,2000,20000,2,10,0,1000
+Iron bands of Bilarro,Rare,Wondrous item,No,16000,11000,45%,Major,2000,20000,2,10,0,1000
+Mantle of spell resistance,Rare,Wondrous item,Yes,19000,11000,73%,Major,2000,20000,2,10,0,1000
+Necklace of prayer beads,Rare,Wondrous item,"Yes (cleric, druid, or paladin)",11000,11000,0%,Major,2000,20000,2,10,0,1000
+Periapt of proof against poison,Rare,Wondrous item,No,6000,11000,-45%,Major,2000,20000,2,10,0,1000
+Robe of eyes,Rare,Wondrous item,Yes,14000,11000,27%,Major,2000,20000,2,10,0,1000
+Rope of entanglement,Rare,Wondrous item,No,9000,11000,-18%,Major,2000,20000,2,10,0,1000
+Stone of controlling earth elementals,Rare,Wondrous item,No,6000,11000,-45%,Major,2000,20000,2,10,0,1000
+Wings of flying,Rare,Wondrous item,Yes,11000,11000,0%,Major,2000,20000,2,10,0,1000
+Amulet of proof against detection and location,Uncommon,Wondrous item,Yes,600,350,71%,Major,100,600,1,6,0,100
+Bag of tricks,Uncommon,Wondrous item,No,100,350,-71%,Major,100,600,1,6,0,100
+Boots of elvenkind,Uncommon,Wondrous item,No,500,350,43%,Major,100,600,1,6,0,100
+Boots of striding and springing,Uncommon,Wondrous item,Yes,100,350,-71%,Major,100,600,1,6,0,100
+Boots of the winterlands,Uncommon,Wondrous item,Yes,100,350,-71%,Major,100,600,1,6,0,100
+Bracers of archery,Uncommon,Wondrous item,Yes,100,350,-71%,Major,100,600,1,6,0,100
+Brooch of shielding,Uncommon,Wondrous item,Yes,200,350,-43%,Major,100,600,1,6,0,100
+Broom of flying,Uncommon,Wondrous item,No,100,350,-71%,Major,100,600,1,6,0,100
+Circlet of blasting,Uncommon,Wondrous item,No,100,350,-71%,Major,100,600,1,6,0,100
+Cloak of elvenkind,Uncommon,Wondrous item,Yes,500,350,43%,Major,100,600,1,6,0,100
+Cloak of protection,Uncommon,Wondrous item,Yes,400,350,14%,Major,100,600,1,6,0,100
+Deck of illusions,Uncommon,Wondrous item,No,500,350,43%,Major,100,600,1,6,0,100
+Eversmoking bottle,Uncommon,Wondrous item,No,500,350,43%,Major,100,600,1,6,0,100
+Eyes of charming,Uncommon,Wondrous item,Yes,300,350,-14%,Major,100,600,1,6,0,100
+Eyes of the eagle,Uncommon,Wondrous item,Yes,100,350,-71%,Major,100,600,1,6,0,100
+Figurine of wondrous power (silver raven),Uncommon,Wondrous item,No,300,350,-14%,Major,100,600,1,6,0,100
+Gauntlets of ogre power,Uncommon,Wondrous item,Yes,500,350,43%,Major,100,600,1,6,0,100
+Gem of brightness,Uncommon,Wondrous item,No,600,350,71%,Major,100,600,1,6,0,100
+Gloves of missile snaring,Uncommon,Wondrous item,Yes,400,350,14%,Major,100,600,1,6,0,100
+Gloves of swimming and climbing,Uncommon,Wondrous item,Yes,200,350,-43%,Major,100,600,1,6,0,100
+Gloves of thievery,Uncommon,Wondrous item,No,400,350,14%,Major,100,600,1,6,0,100
+Hat of disguise,Uncommon,Wondrous item,Yes,400,350,14%,Major,100,600,1,6,0,100
+Headband of intellect,Uncommon,Wondrous item,Yes,300,350,-14%,Major,100,600,1,6,0,100
+Helm of telepathy,Uncommon,Wondrous item,Yes,600,350,71%,Major,100,600,1,6,0,100
+Instrument of the bards (Doss lute),Uncommon,Wondrous item,Yes (bard),300,350,-14%,Major,100,600,1,6,0,100
+Instrument of the bards (Fochlucan bandore),Uncommon,Wondrous item,Yes (bard),100,350,-71%,Major,100,600,1,6,0,100
+Instrument of the bards (Mac-Fuirmidh cittern),Uncommon,Wondrous item,Yes (bard),600,350,71%,Major,100,600,1,6,0,100
+Medallion of thoughts,Uncommon,Wondrous item,Yes,200,350,-43%,Major,100,600,1,6,0,100
+Necklace of adaptation,Uncommon,Wondrous item,Yes,500,350,43%,Major,100,600,1,6,0,100
+Pearl of power,Uncommon,Wondrous item,Yes (spellcaster),200,350,-43%,Major,100,600,1,6,0,100
+Periapt of wound closure,Uncommon,Wondrous item,Yes,300,350,-14%,Major,100,600,1,6,0,100
+Pipes of haunting,Uncommon,Wondrous item,No,500,350,43%,Major,100,600,1,6,0,100
+Pipes of the sewers,Uncommon,Wondrous item,Yes,600,350,71%,Major,100,600,1,6,0,100
+Quiver of Ehlonna,Uncommon,Wondrous item,No,200,350,-43%,Major,100,600,1,6,0,100
+Slippers of spider climbing,Uncommon,Wondrous item,Yes,300,350,-14%,Major,100,600,1,6,0,100
+Stone of good luck (luckstone),Uncommon,Wondrous item,Yes,600,350,71%,Major,100,600,1,6,0,100
+Wind fan,Uncommon,Wondrous item,No,200,350,-43%,Major,100,600,1,6,0,100
+Winged boots,Uncommon,Wondrous item,Yes,400,350,14%,Major,100,600,1,6,0,100
+Amulet of the planes,Very Rare,Wondrous item,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Belt of fire giant strength,Very Rare,Wondrous item,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Belt of giant strength (frost/stone),Very Rare,Wondrous item,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Candle of invocation,Very Rare,Wondrous item,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Carpet of flying,Very Rare,Wondrous item,No,30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Cloak of arachnida,Very Rare,Wondrous item,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Crystal ball (very rare),Very Rare,Wondrous item,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Efreeti bottle,Very Rare,Wondrous item,No,30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Figurine of wondrous power (obsidian steed),Very Rare,Wondrous item,No,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Helm of brilliance,Very Rare,Wondrous item,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Horn of Valhalla (bronze),Very Rare,Wondrous item,No,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Instrument of the bards (Anstruth harp),Very Rare,Wondrous item,Yes (bard),40000,35000,14%,Major,20000,50000,1,4,1,10000
+Ioun stone (absorption),Very Rare,Wondrous item,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Ioun stone (agility),Very Rare,Wondrous item,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Ioun stone (fortitude),Very Rare,Wondrous item,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Ioun stone (insight),Very Rare,Wondrous item,Yes,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Ioun stone (intellect),Very Rare,Wondrous item,Yes,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Ioun stone (leadership),Very Rare,Wondrous item,Yes,30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Ioun stone (strength),Very Rare,Wondrous item,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Manual of bodily health,Very Rare,Wondrous item,No,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Manual of gainful exercise,Very Rare,Wondrous item,No,50000,35000,43%,Major,20000,50000,1,4,1,10000
+Manual of golems,Very Rare,Wondrous item,No,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Manual of quickness of action,Very Rare,Wondrous item,No,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Mirror of life trapping,Very Rare,Wondrous item,No,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Robe of scintillating colors,Very Rare,Wondrous item,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Robe of stars,Very Rare,Wondrous item,Yes,20000,35000,-43%,Major,20000,50000,1,4,1,10000
+Tome of clear thought,Very Rare,Wondrous item,No,40000,35000,14%,Major,20000,50000,1,4,1,10000
+Tome of leadership and influence,Very Rare,Wondrous item,No,30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Tome of understanding,Very Rare,Wondrous item,No,30000,35000,-14%,Major,20000,50000,1,4,1,10000
+Alchemy jug,Uncommon,Wondrous item,No,200,175,14%,Minor,50,300,1,6,0,50
+"Ammunition, +1",Uncommon,Weapon,No,100,175,-43%,Minor,50,300,1,6,0,50
+"Ammunition, +2",Rare,Weapon,No,7500,5500,36%,Minor,1000,10000,2,10,0,500
+"Ammunition, +3",Very Rare,Weapon,No,25000,17500,43%,Minor,10000,25000,1,4,1,5000
+Armor of gleaming,Common,Armor,No,15,22.5,-33%,Minor,10,35,1,6,1,5
+Arrow of slaying,Very Rare,Weapon,No,10000,17500,-43%,Minor,10000,25000,1,4,1,5000
+Bag of beans,Rare,Wondrous item,No,4000,5500,-27%,Minor,1000,10000,2,10,0,500
+Bag of devouring,Very Rare,Wondrous item,No,10000,17500,-43%,Minor,10000,25000,1,4,1,5000
+Bag of holding,Uncommon,Wondrous item,No,200,175,14%,Minor,50,300,1,6,0,50
+Bead of force,Rare,Wondrous item,No,6000,5500,9%,Minor,1000,10000,2,10,0,500
+Bead of nourishment,Common,Wondrous item,No,30,22.5,33%,Minor,10,35,1,6,1,5
+Bead of refreshment,Common,Wondrous item,No,10,22.5,-56%,Minor,10,35,1,6,1,5
+Boots of false tracks,Common,Wondrous item,No,15,22.5,-33%,Minor,10,35,1,6,1,5
+Candle of the deep,Common,Wondrous item,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Cap of water breathing,Uncommon,Wondrous item,No,100,175,-43%,Minor,50,300,1,6,0,50
+Cast-off armor,Common,Armor,No,20,22.5,-11%,Minor,10,35,1,6,1,5
+Charlatan’s die,Common,Wondrous item,Yes,15,22.5,-33%,Minor,10,35,1,6,1,5
+Chime of opening,Rare,Wondrous item,No,4500,5500,-18%,Minor,1000,10000,2,10,0,500
+Cloak of billowing,Common,Wondrous item,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Cloak of many fashions,Common,Wondrous item,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Cloak of the manta ray,Uncommon,Wondrous item,No,50,175,-71%,Minor,50,300,1,6,0,50
+Clockwork amulet,Common,Wondrous item,No,20,22.5,-11%,Minor,10,35,1,6,1,5
+Clothes of mending,Common,Wondrous item,No,20,22.5,-11%,Minor,10,35,1,6,1,5
+Dark shard amulet,Common,Wondrous item,Yes (warlock),20,22.5,-11%,Minor,10,35,1,6,1,5
+Decanter of endless water,Uncommon,Wondrous item,No,250,175,43%,Minor,50,300,1,6,0,50
+Dread helm,Common,Wondrous item,No,30,22.5,33%,Minor,10,35,1,6,1,5
+Driftglobe,Uncommon,Wondrous item,No,200,175,14%,Minor,50,300,1,6,0,50
+Dust of disappearance,Uncommon,Wondrous item,No,250,175,43%,Minor,50,300,1,6,0,50
+Dust of dryness,Uncommon,Wondrous item,No,300,175,71%,Minor,50,300,1,6,0,50
+Dust of sneezing and choking,Uncommon,Wondrous item,No,100,175,-43%,Minor,50,300,1,6,0,50
+Ear horn of hearing,Common,Wondrous item,No,15,22.5,-33%,Minor,10,35,1,6,1,5
+Elemental gem,Uncommon,Wondrous item,No,200,175,14%,Minor,50,300,1,6,0,50
+Elixir of health,Rare,Potion,No,6500,5500,18%,Minor,1000,10000,2,10,0,500
+Enduring spellbook,Common,Wondrous item,No,20,22.5,-11%,Minor,10,35,1,6,1,5
+Ersatz eye,Common,Wondrous item,Yes,35,22.5,56%,Minor,10,35,1,6,1,5
+Eyes of minute seeing,Uncommon,Wondrous item,No,100,175,-43%,Minor,50,300,1,6,0,50
+Folding boat,Rare,Wondrous item,No,3500,5500,-36%,Minor,1000,10000,2,10,0,500
+Goggles of night,Uncommon,Wondrous item,No,300,175,71%,Minor,50,300,1,6,0,50
+Hat of vermin,Common,Wondrous item,No,30,22.5,33%,Minor,10,35,1,6,1,5
+Hat of wizardry,Common,Wondrous item,Yes (wizard),15,22.5,-33%,Minor,10,35,1,6,1,5
+Helm of comprehending languages,Uncommon,Wondrous item,No,50,175,-71%,Minor,50,300,1,6,0,50
+Heward’s handy haversack,Rare,Wondrous item,No,5500,5500,0%,Minor,1000,10000,2,10,0,500
+Heward’s handy spice pouch,Common,Wondrous item,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Horn of silent alarm,Common,Wondrous item,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Horseshoes of a zephyr,Very Rare,Wondrous item,No,20000,17500,14%,Minor,10000,25000,1,4,1,5000
+Horseshoes of speed,Rare,Wondrous item,No,5000,5500,-9%,Minor,1000,10000,2,10,0,500
+Immovable rod,Uncommon,Rod,No,300,175,71%,Minor,50,300,1,6,0,50
+Instrument of illusions,Common,Wondrous item,Yes,30,22.5,33%,Minor,10,35,1,6,1,5
+Instrument of scribing,Common,Wondrous item,Yes,35,22.5,56%,Minor,10,35,1,6,1,5
+Keoghtom’s ointment,Uncommon,Wondrous item,No,150,175,-14%,Minor,50,300,1,6,0,50
+Lantern of revealing,Uncommon,Wondrous item,No,200,175,14%,Minor,50,300,1,6,0,50
+Lock of trickery,Common,Wondrous item,No,20,22.5,-11%,Minor,10,35,1,6,1,5
+Mariner’s armor,Uncommon,Armor,No,200,175,14%,Minor,50,300,1,6,0,50
+Mithral armor,Uncommon,Armor,No,250,175,43%,Minor,50,300,1,6,0,50
+Moon-touched sword,Common,Weapon,No,10,22.5,-56%,Minor,10,35,1,6,1,5
+Mystery key,Common,Wondrous item,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Necklace of fireballs,Rare,Wondrous item,No,6500,5500,18%,Minor,1000,10000,2,10,0,500
+Nolzur’s marvelous pigments,Very Rare,Wondrous item,No,15000,17500,-14%,Minor,10000,25000,1,4,1,5000
+Oil of etherealness,Rare,Potion,No,1000,5500,-82%,Minor,1000,10000,2,10,0,500
+Oil of sharpness,Very Rare,Potion,No,15000,17500,-14%,Minor,10000,25000,1,4,1,5000
+Oil of slipperiness,Uncommon,Potion,No,50,175,-71%,Minor,50,300,1,6,0,50
+Orb of direction,Common,Wondrous item,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Orb of time,Common,Wondrous item,No,10,22.5,-56%,Minor,10,35,1,6,1,5
+Perfume of bewitching,Common,Wondrous item,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Periapt of health,Uncommon,Wondrous item,No,50,175,-71%,Minor,50,300,1,6,0,50
+Philter of love,Uncommon,Potion,No,100,175,-43%,Minor,50,300,1,6,0,50
+Pipe of smoke monsters,Common,Wondrous item,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Pole of angling,Common,Wondrous item,No,10,22.5,-56%,Minor,10,35,1,6,1,5
+Pole of collapsing,Common,Wondrous item,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Portable hole,Rare,Wondrous item,No,3000,5500,-45%,Minor,1000,10000,2,10,0,500
+Pot of awakening,Common,Wondrous item,No,20,22.5,-11%,Minor,10,35,1,6,1,5
+Potion of animal friendship,Uncommon,Potion,No,300,175,71%,Minor,50,300,1,6,0,50
+Potion of clairvoyance,Rare,Potion,No,4000,5500,-27%,Minor,1000,10000,2,10,0,500
+Potion of climbing,Common,Potion,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Potion of cloud giant strength,Very Rare,Potion,No,15000,17500,-14%,Minor,10000,25000,1,4,1,5000
+Potion of diminution,Rare,Potion,No,4500,5500,-18%,Minor,1000,10000,2,10,0,500
+Potion of fire breath,Uncommon,Potion,No,200,175,14%,Minor,50,300,1,6,0,50
+Potion of fire giant strength,Rare,Potion,No,5000,5500,-9%,Minor,1000,10000,2,10,0,500
+Potion of flying,Very Rare,Potion,No,25000,17500,43%,Minor,10000,25000,1,4,1,5000
+Potion of frost giant strength,Rare,Potion,No,7500,5500,36%,Minor,1000,10000,2,10,0,500
+Potion of gaseous form,Rare,Potion,No,5500,5500,0%,Minor,1000,10000,2,10,0,500
+Potion of growth,Uncommon,Potion,No,150,175,-14%,Minor,50,300,1,6,0,50
+Potion of healing,Common,Potion,No,15,22.5,-33%,Minor,10,35,1,6,1,5
+"Potion of healing, greater",Uncommon,Potion,No,250,175,43%,Minor,50,300,1,6,0,50
+"Potion of healing, superior",Rare,Potion,No,6000,5500,9%,Minor,1000,10000,2,10,0,500
+"Potion of healing, supreme",Very Rare,Potion,No,10000,17500,-43%,Minor,10000,25000,1,4,1,5000
+Potion of heroism,Rare,Potion,No,8500,5500,55%,Minor,1000,10000,2,10,0,500
+Potion of hill giant strength,Uncommon,Potion,No,150,175,-14%,Minor,50,300,1,6,0,50
+Potion of invisibility,Very Rare,Potion,No,25000,17500,43%,Minor,10000,25000,1,4,1,5000
+Potion of invulnerability,Rare,Potion,No,2000,5500,-64%,Minor,1000,10000,2,10,0,500
+Potion of longevity,Very Rare,Potion,No,10000,17500,-43%,Minor,10000,25000,1,4,1,5000
+Potion of mind reading,Rare,Potion,No,5000,5500,-9%,Minor,1000,10000,2,10,0,500
+Potion of poison,Uncommon,Potion,No,100,175,-43%,Minor,50,300,1,6,0,50
+Potion of resistance,Uncommon,Potion,No,200,175,14%,Minor,50,300,1,6,0,50
+Potion of speed,Very Rare,Potion,No,15000,17500,-14%,Minor,10000,25000,1,4,1,5000
+Potion of stone giant strength,Rare,Potion,No,5500,5500,0%,Minor,1000,10000,2,10,0,500
+Potion of storm giant strength,Legendary,Potion,No,75000,87500,-14%,Minor,25000,150000,2,6,0,12500
+Potion of vitality,Very Rare,Potion,No,20000,17500,14%,Minor,10000,25000,1,4,1,5000
+Potion of water breathing,Uncommon,Potion,No,200,175,14%,Minor,50,300,1,6,0,50
+Quaal’s feather token,Rare,Wondrous item,No,5500,5500,0%,Minor,1000,10000,2,10,0,500
+Ring of swimming,Uncommon,Ring,No,250,175,43%,Minor,50,300,1,6,0,50
+Robe of useful items,Uncommon,Wondrous item,No,50,175,-71%,Minor,50,300,1,6,0,50
+Rope of climbing,Uncommon,Wondrous item,No,50,175,-71%,Minor,50,300,1,6,0,50
+Rope of mending,Common,Wondrous item,No,20,22.5,-11%,Minor,10,35,1,6,1,5
+Ruby of the war mage,Common,Wondrous item,Yes (spellcaster),35,22.5,56%,Minor,10,35,1,6,1,5
+Saddle of the cavalier,Uncommon,Wondrous item,No,200,175,14%,Minor,50,300,1,6,0,50
+Scroll of protection,Rare,Scroll,No,9000,5500,64%,Minor,1000,10000,2,10,0,500
+Sending stones,Uncommon,Wondrous item,No,50,175,-71%,Minor,50,300,1,6,0,50
+Shield of expression,Common,Armor,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Smoldering armor,Common,Armor,No,10,22.5,-56%,Minor,10,35,1,6,1,5
+Sovereign glue,Legendary,Wondrous item,No,75000,87500,-14%,Minor,25000,150000,2,6,0,12500
+Spell scroll (1st level),Common,Scroll,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Spell scroll (2nd level),Uncommon,Scroll,No,250,175,43%,Minor,50,300,1,6,0,50
+Spell scroll (3rd level),Uncommon,Scroll,No,250,175,43%,Minor,50,300,1,6,0,50
+Spell scroll (4th level),Rare,Scroll,No,6000,5500,9%,Minor,1000,10000,2,10,0,500
+Spell scroll (5th level),Rare,Scroll,No,4000,5500,-27%,Minor,1000,10000,2,10,0,500
+Spell scroll (6th level),Very Rare,Scroll,No,10000,17500,-43%,Minor,10000,25000,1,4,1,5000
+Spell scroll (7th level),Very Rare,Scroll,No,25000,17500,43%,Minor,10000,25000,1,4,1,5000
+Spell scroll (8th level),Very Rare,Scroll,No,15000,17500,-14%,Minor,10000,25000,1,4,1,5000
+Spell scroll (9th level),Legendary,Scroll,No,87500,87500,0%,Minor,25000,150000,2,6,0,12500
+Spell scroll (cantrip),Common,Scroll,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Staff of adornment,Common,Staff,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Staff of birdcalls,Common,Staff,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Staff of flowers,Common,Staff,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Talking doll,Common,Wondrous item,Yes,25,22.5,11%,Minor,10,35,1,6,1,5
+Tankard of sobriety,Common,Wondrous item,No,15,22.5,-33%,Minor,10,35,1,6,1,5
+Unbreakable arrow,Common,Weapon,No,30,22.5,33%,Minor,10,35,1,6,1,5
+Universal solvent,Legendary,Wondrous item,No,100000,87500,14%,Minor,25000,150000,2,6,0,12500
+Veteran’s cane,Common,Wondrous item,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Walloping ammunition,Common,Weapon,No,25,22.5,11%,Minor,10,35,1,6,1,5
+Wand of conducting,Common,Wand,No,35,22.5,56%,Minor,10,35,1,6,1,5
+Wand of magic detection,Uncommon,Wand,No,100,175,-43%,Minor,50,300,1,6,0,50
+Wand of pyrotechnics,Common,Wand,No,15,22.5,-33%,Minor,10,35,1,6,1,5
+Wand of scowls,Common,Wand,No,10,22.5,-56%,Minor,10,35,1,6,1,5
+Wand of secrets,Uncommon,Wand,No,50,175,-71%,Minor,50,300,1,6,0,50
+Wand of smiles,Common,Wand,No,10,22.5,-56%,Minor,10,35,1,6,1,5
