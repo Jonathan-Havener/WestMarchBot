@@ -4,7 +4,7 @@ class MagicItem:
                  rarity: str,
                  item_type: str,
                  attune: str,
-                 impact: str
+                 impact: str,
                  ):
         self.name = name
         self.rarity = rarity
@@ -12,4 +12,7 @@ class MagicItem:
         self.attunement = attune
         self.impact = impact
 
-        self.suppliers = []
+        self._suppliers = []
+
+    def add_supplier(self, shop):
+        self._suppliers += [shop]

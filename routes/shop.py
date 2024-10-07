@@ -12,7 +12,7 @@ from shop_bot import MagicManager
 
 
 class MagicItemEmbed(discord.Embed):
-    def __init__(self, title, description, color, magicItems):
+    def __init__(self, title, description, color, listings):
         super().__init__(title=title, description=description, color=color)
         # Set the footer, author, and thumbnail (optional)
         self.set_footer(text="Good luck, adventurer!")
@@ -20,14 +20,23 @@ class MagicItemEmbed(discord.Embed):
         self.set_thumbnail(url="https://example.com/dragon_thumbnail.png")  # Replace with an actual image URL
 
         self._items = {}
-        self.items = magicItems
+        self.items = listings
 
     @property
     def items(self) -> dict:
         return self._items
 
+    def get_item_properties(self, magic_item) -> dict:
+        prop = {
+            "Rarity": magic_item.rarity,
+            "Item Type": magic_item.item_type,
+            "Attunement": magic_item.attunement,
+            "impact": magic_item.impact
+        }
+        return prop
+
     @items.setter
-    def items(self, magic_item_list):
+    def items(self, magic_item_listings):
         available_reacts = [
             "1️⃣",
             "2️⃣",
@@ -39,13 +48,17 @@ class MagicItemEmbed(discord.Embed):
             "8️⃣",
             "9️⃣",
         ]
-        for item in magic_item_list:
+        for listing in magic_item_listings:
             this_emoji = available_reacts.pop(0)
-            self._items.update({this_emoji: item })
-            details = [f"**{key.title()}:** {item.__dict__[key]}" for key in item.__dict__ if not key.startswith("_")]
+            self._items.update({this_emoji: listing})
+            details = [
+                f"**{key.title()}:** {self.get_item_properties(listing['item'])[key]}"
+                for key in self.get_item_properties(listing["item"])
+            ]
+            details += [f"**Price:** {listing['price']}"]
             details = "\n".join(details)
             self.add_field(
-                name=f"{this_emoji} : **{item.name.title()}**",
+                name=f"{this_emoji} : **{listing['item'].name.title()}**",
                 value=details,
                 inline=False  # Ensures each item is listed on a new line
             )
@@ -66,7 +79,7 @@ class Shop(commands.Cog):
             title="Adventure Quest",
             description="Embark on a journey across Verdelume!",
             color=discord.Color.blue(), # Embed color
-            magicItems=self._shop.inventory
+            listings=self._shop.inventory
         )
 
         message = await ctx.send(embed=embed)
@@ -83,18 +96,18 @@ class Shop(commands.Cog):
                 reaction, user = await self.bot.wait_for("reaction_add", check=check)
 
                 # Find the item corresponding to the reaction
-                selected_item = embed.items.get(reaction.emoji, None)
+                selected_listing = embed.items.get(reaction.emoji, None)
 
-                if selected_item:
+                if selected_listing:
                     # Remove the selected item from the list
-                    self._shop.sell(selected_item.name)
+                    self._shop.sell(selected_listing["item"].name)
 
                     # Edit the embed to update the list of items
                     embed = MagicItemEmbed(
                         title="Adventure Quest",
                         description="Embark on a journey across Verdelume!",
                         color=discord.Color.blue(), # Embed color
-                        magicItems=self._shop.inventory
+                        listings=self._shop.inventory
                     )
                     await message.edit(embed=embed)
                     await message.clear_reactions()
@@ -103,7 +116,7 @@ class Shop(commands.Cog):
 
                     # Optionally, send a message to the user confirming the purchase
                     await ctx.send(
-                        f"{user.mention} purchased **{selected_item.name}** for {0}g!")
+                        f"{user.mention} purchased **{selected_listing['item'].name}** for {selected_listing['price']}g!")
 
             except asyncio.TimeoutError:
                 await ctx.send("Shop timed out! Please try again later.")
