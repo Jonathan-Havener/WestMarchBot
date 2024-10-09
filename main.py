@@ -5,6 +5,7 @@ from discord.ext import commands
 from config import TOKEN, PREFIX
 # add the cogs context for calls to __subclasses__
 from routes import *
+from routines import *
 
 intents = discord.Intents.all()
 intents.members = True
@@ -22,6 +23,13 @@ async def on_ready():
         module_name = cog.__module__.split(".")[0]
         if module_name == "routes":
             await bot.add_cog(cog(bot))
+
+    # routines=[routine(bot).process() for routine in Routine.__subclasses__()]
+    import asyncio
+    for routine in Routine.__subclasses__():
+        item = routine(bot)
+        await item.process()
+    # await asyncio.gather(routine(bot).process() for routine in Routine.__subclasses__())
 
 
 bot.run(TOKEN)

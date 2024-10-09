@@ -1,0 +1,8 @@
+filter:
+  item_type: [
+    Wondrous item
+  ]
+  rarity: [
+    Very Rare,
+    Legendary
+  ]

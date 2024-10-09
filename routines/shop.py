@@ -7,7 +7,7 @@ import asyncio
 this_file = Path(__file__).parent
 shop_bot_root_path = this_file.parent / "logic"
 sys.path.append(str(shop_bot_root_path))
-from shop_bot import Shop as ShopLogic
+from shop_bot import ShopBuilder
 from shop_bot import MagicManager
 
 
@@ -66,25 +66,56 @@ class MagicItemEmbed(discord.Embed):
             )
 
 
-class Shop(commands.Cog):
+from .routine import Routine
+
+
+class Shop(Routine):
     def __init__(self, bot):
         print("Shop initialized")
         self.bot = bot
-        magic_manager = MagicManager(source=this_file.parent / "data" / "Magic Item Distribution - Items.csv")
-        self._shop = ShopLogic(magic_manager_obj=magic_manager)
-        self._shop.fill_inventory()
 
-    @commands.command(guild_messages=True)
-    async def shop(self, ctx):
+        shop_definitions = Path(r"C:\Users\jonah\Desktop\Programs\WestMarchBot\data\shop_definitions")
+        self._shops = ShopBuilder().build_shops(shop_definitions)
+
+        bot_updates_channel_id = 1293370203060830279
+        self.ctx = self.bot.get_channel(bot_updates_channel_id)
+
+        self._shop_uis = []
+
+        super().__init__()
+
+    # def __del__(self):
+    #     loop = self.clean_up()
+    #     while True:
+    #         pending = asyncio.all_tasks(loop=loop)
+    #         if not pending:
+    #             break
+    #     print("Done")
+    #
+    # def clean_up(self):
+    #     loop = asyncio.get_event_loop()
+    #
+    #     for shop in self._shop_uis:
+    #         asyncio.run_coroutine_threadsafe(shop.delete(), loop)
+    #     return loop
+
+    async def process(self):
+        await asyncio.gather(*[self.setup_shop(shop) for shop in self._shops])
+
+    async def setup_shop(self, shop):
         # Create an embed (card)
         embed = MagicItemEmbed(
-            title=self._shop.name,
+            title=shop.name,
             description="Embark on a journey across Verdelume!",
-            color=discord.Color.blue(),# Embed color
-            listings=self._shop.inventory
+            color=discord.Color.blue(),  # Embed color
+            listings=shop.inventory
         )
 
-        message = await ctx.send(embed=embed)
+        thread = next((thread for thread in self.ctx.threads if thread.name == shop.name), None)
+        if not thread:
+            thread, _ = await self.ctx.create_thread(content=shop.description, name=shop.name)
+        message = await thread.send(embed=embed)
+        self._shop_uis.append(message)
 
         for emoji in embed.items:
             await message.add_reaction(emoji)
@@ -101,25 +132,20 @@ class Shop(commands.Cog):
 
                 if selected_listing:
                     # Remove the selected item from the list
-                    self._shop.sell(selected_listing["item"].name)
+                    shop.sell(selected_listing["item"].name)
 
                     # Edit the embed to update the list of items
-                    embed.items = self._shop.inventory
+                    embed.items = shop.inventory
 
                     await message.edit(embed=embed)
+
+                    await thread.send(
+                        f"{user.mention} purchased **{selected_listing['item'].name}** for {selected_listing['price']}g!")
+
                     await message.clear_reactions()
                     for emoji in embed.items:
                         await message.add_reaction(emoji)
 
-                    await ctx.send(
-                        f"{user.mention} purchased **{selected_listing['item'].name}** for {selected_listing['price']}g!")
-
             except asyncio.TimeoutError:
-                await ctx.send("Shop timed out! Please try again later.")
+                await thread.send("Shop timed out! Please try again later.")
                 break
-
-
-    @commands.command(guild_messages=True)
-    async def stock_shops(self, ctx):
-        self._shop.fill_inventory()
-        await ctx.send('Inventory Filled!')

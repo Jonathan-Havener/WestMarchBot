@@ -1,70 +1,38 @@
-from .magic_item import MagicItem
 from .magic_manager import MagicManager
 from abc import abstractmethod
-from pathlib import Path
-import yaml
 import random
+from .pricing_scheme import PricingScheme
 
 
-class PricingScheme:
-    def __init__(self, source: [Path] = None):
-        self.data = {}
-        self.rarity = None
-        self.impact = None
-        if not source:
-            source = Path(__file__).parent.parent.parent / "data" / "magic_item_prices.yml"
-        self._load_properties(source)
 
-    @property
-    def _num_dice(self):
-        return self.data[self.rarity][self.impact]["num_dice"]
+from pathlib import Path
+from .ansible_like import AnsibleLike
 
-    @property
-    def _dice_face(self):
-        return self.data[self.rarity][self.impact]["dice_face"]
 
-    @property
-    def _adder(self):
-        return self.data[self.rarity][self.impact]["adder"]
+class ShopBuilder:
+    def build_shops(self, directory: Path) -> list:
+        this_file = Path(__file__).parent
+        data_source = this_file.parent.parent / "data" / "Magic Item Distribution - Items.csv"
 
-    @property
-    def _multiplier(self):
-        return self.data[self.rarity][self.impact]["multiplier"]
+        magic_manager = MagicManager(source=data_source)
+        price_scheme = PricingScheme()
 
-    def _merge_properties(self, data):
-        # This function will merge properties from parents to children
-        if isinstance(data, dict):
-            for key, value in data.items():
-                # Recursively merge properties of subkeys
-                data[key] = self._merge_properties(value)
-            if "child_key" in data:
-                other_data = {key: data[key] for key in data if key != "child_key"}
-                data = {
-                    child: data["child_key"][child]
-                    for child in data["child_key"].keys()
-                }
-                for key in data:
-                    data[key].update(other_data)
-        return data
+        shops = []
+        for file in directory.iterdir():
+            new_shop = Shop(magic_manager, price_scheme)
+            reader = AnsibleLike(source=file)
+            new_shop.filter = reader.data
+            new_shop.name = file.stem
 
-    def _load_properties(self, filename):
-        with open(filename, 'r') as file:
-            self.data = yaml.safe_load(file) # Load YAML file
-            self.data = self.data["items"]
-            self.data = self._merge_properties(self.data)
+            new_shop.fill_inventory()
 
-    def get_price(self, magic_item):
-        self.rarity = magic_item.rarity.lower().replace(" ", "_")
-        self.impact = magic_item.impact.lower()
+            shops.append(new_shop)
 
-        return (sum(
-            [random.randint(1, self._dice_face)
-             for i in range(0, self._num_dice)]
-        ) + self._adder) * self._multiplier
+        return shops
 
 
 class Shop:
-    def __init__(self, magic_manager_obj: MagicManager, price_scheme_object: PricingScheme= None):
+    def __init__(self, magic_manager_obj: MagicManager, price_scheme_object: PricingScheme = None):
         self._magic_man = magic_manager_obj
         self.__stock = []
         self._capacity = 5
@@ -73,19 +41,20 @@ class Shop:
             price_scheme_object = PricingScheme()
         self.price_scheme = price_scheme_object
 
-    @property
-    @abstractmethod
-    def _filter(self):
-        return {}
+        self.filter = {}
+        self.name = "Basic Shop"
+        self.description = "Some shop information."
 
     @property
     def _stock(self) -> list:
         if not self.__stock:
-            self.__stock = self._magic_man.get_filtered_items(self._filter)
+            self.__stock = self._magic_man.get_filtered_items(self.filter)
         return self.__stock
 
     def fill_inventory(self) -> None:
         available_space = self._capacity - len(self.inventory)
+        if not len(self._stock) > 0:
+            raise Exception()
         new_stock = random.choices(self._stock, k=available_space)
 
         for item in new_stock:

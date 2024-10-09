@@ -1,0 +1,8 @@
+filter:
+  item_type: [
+               Potion
+  ]
+  rarity: [
+    Common,
+    Uncommon
+  ]
