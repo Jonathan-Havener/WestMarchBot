@@ -12,6 +12,7 @@ from BrighthavenProperties import *
 
 intents = discord.Intents.all()
 intents.members = True
+intents.guilds = True
 intents.messages = True
 intents.message_content = True
 
@@ -193,6 +194,7 @@ async def check_role_expiry():
 
 
 async def process_thread(thread, role):
+
     async for message in thread.history(limit=None):
         if message.author.id != thread.owner_id:
             message_date = message.created_at.isoformat()
