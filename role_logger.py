@@ -5,9 +5,10 @@ from discord import utils
 from discord.ext import commands
 from datetime import datetime, timedelta, timezone
 import json
-from pathlib import Path
-from config import TOKEN, PREFIX, channel_id
+from config import TOKEN, PREFIX
 from wm_logging import gen_logger
+#from NewDevlinProperties import *
+from BrighthavenProperties import *
 
 intents = discord.Intents.all()
 intents.members = True
@@ -15,17 +16,6 @@ intents.messages = True
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
-
-GUILD_ID = 918112437331427358
-QUEST_CHANNEL_ID = 1064019917579497592  # Replace with your category ID
-bot_updates_channel_id = 1292599936474681384
-ROLE_NAME = 'Adventurers'
-EXPIRY_FILE = 'role_expiry.json'
-expiry_path = Path(__file__).parent / "logs" / EXPIRY_FILE
-
-# days
-role_duration = 90
-role_warning = 20
 
 
 def load_expiry_data():
@@ -57,7 +47,7 @@ async def on_ready():
     print(f'Logged in as {bot.user}')
     await update_role_expiry()
     await check_role_expiry()
-    # await notify_member_count()
+    await notify_member_count()
     await notify_new_members()
     await notify_expiring_members()
     await notify_lost_members()
@@ -68,7 +58,7 @@ async def on_ready():
 async def notify_member_count():
     channel = bot.get_channel(bot_updates_channel_id)
 
-    message = f"New Devlin currently has {len(role_expiry['active users'])} Adventurers!"
+    message = f"This campaign currently has {len(role_expiry['active users'])} Adventurers!"
 
     if channel:
         await channel.send(message)
@@ -159,6 +149,7 @@ async def update_role_expiry():
 async def check_role_expiry():
     role_expiry["expired users"] = {}
     role_expiry["expiring users"] = {}
+    role_expiry["new users"] = {}
 
     guild = bot.get_guild(GUILD_ID)
     if not guild:
@@ -179,7 +170,7 @@ async def check_role_expiry():
 
         member = utils.get(guild.members, name=member)
         if not member:
-            gen_logger.warning(f"User {member.name} in {EXPIRY_FILE} but couldn't be found in the guild.")
+            gen_logger.warning(f"User {member} in {EXPIRY_FILE} but couldn't be found in the guild.")
             continue
         if role not in member.roles:
             continue
