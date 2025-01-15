@@ -1,1 +1,1 @@
-$env:PYTHONPATH="C:\Users\jonah\Desktop\Programs\WestMarchBot\src"; python -m unittest tests.test_routines.test_player_signup.PlayerSignupCase.test_something
+$env:PYTHONPATH="C:\Users\jonah\Desktop\Programs\WestMarchBot\src"; python -m unittest tests.test_routines.test_player_signup.PlayerSignupCase.test_get_player_history
