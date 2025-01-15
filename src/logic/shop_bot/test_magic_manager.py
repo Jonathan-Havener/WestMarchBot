@@ -1,5 +1,5 @@
 import unittest
-from logic.shop_bot.shop import MagicManager
+from src.logic.shop_bot.shop import MagicManager
 from pathlib import Path
 
 

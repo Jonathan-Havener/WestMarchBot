@@ -1,11 +1,11 @@
 import unittest
-from logic.shop_bot.shop import MagicManager, Shop, ShopBuilder
+from src.logic.shop_bot.shop import MagicManager, Shop, ShopBuilder
 from pathlib import Path
 
 
 class TestShopBuilder(unittest.TestCase):
     def test_builder(self):
-        shop_directory = Path(r"C:\Users\jonah\Desktop\Programs\WestMarchBot\data\shop_definitions")
+        shop_directory = Path(r"/data/shop_definitions")
         shops = ShopBuilder().build_shops(shop_directory)
         self.assertGreater(len(shops), 0)
 

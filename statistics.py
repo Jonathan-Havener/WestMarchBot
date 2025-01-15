@@ -1,14 +1,12 @@
 # main.py
 
 import discord
-from discord import utils
 from discord.ext import commands
-from datetime import datetime, timedelta, timezone
 import json
-from config import TOKEN, PREFIX
-from wm_logging import gen_logger
-from NewDevlinProperties import *
-#from BrighthavenProperties import *
+from properties.config import TOKEN, PREFIX
+from src.wm_logging import gen_logger
+from properties.NewDevlinProperties import *
+#from properties.righthavenProperties import *
 
 intents = discord.Intents.all()
 intents.members = True
