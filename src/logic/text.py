@@ -92,7 +92,7 @@ def write_dict_to_csv(out_path, data_dict):
         for key, value in data_dict.items():
             writer.writerow([key, value])
 
-out_path = '../data/output.csv'  # Replace with your desired file path
+out_path = '../../data/output.csv'  # Replace with your desired file path
 write_dict_to_csv(out_path, font_texts)
 
 

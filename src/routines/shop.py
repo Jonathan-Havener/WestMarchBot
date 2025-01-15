@@ -1,14 +1,11 @@
 from discord.ext import commands
 import discord
 from pathlib import Path
-import sys
 import asyncio
 
-this_file = Path(__file__).parent
-shop_bot_root_path = this_file.parent / "logic"
-sys.path.append(str(shop_bot_root_path))
-from shop_bot import ShopBuilder
-from shop_bot import MagicManager
+from ..logic.shop_bot import ShopBuilder
+from ..logic.shop_bot import MagicManager
+from .routine import Routine
 
 
 class MagicItemEmbed(discord.Embed):
@@ -66,15 +63,12 @@ class MagicItemEmbed(discord.Embed):
             )
 
 
-from .routine import Routine
-
-
 class Shop(Routine):
     def __init__(self, bot):
         print("Shop initialized")
         self.bot = bot
 
-        shop_definitions = Path(r"C:\Users\jonah\Desktop\Programs\WestMarchBot\data\shop_definitions")
+        shop_definitions = Path(r"/data/shop_definitions")
         self._shops = ShopBuilder().build_shops(shop_definitions)
 
         bot_updates_channel_id = 1293370203060830279

@@ -2,10 +2,9 @@
 
 import discord
 from discord.ext import commands
-from config import TOKEN, PREFIX
+from properties.config import TOKEN, PREFIX
 # add the cogs context for calls to __subclasses__
-from routes import *
-from routines import *
+from src.routines import *
 
 intents = discord.Intents.all()
 intents.members = True
@@ -13,6 +12,7 @@ intents.messages = True
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+
 
 # Load all cogs (commands) when bot is ready
 @bot.event
@@ -25,7 +25,6 @@ async def on_ready():
             await bot.add_cog(cog(bot))
 
     # routines=[routine(bot).process() for routine in Routine.__subclasses__()]
-    import asyncio
     for routine in Routine.__subclasses__():
         item = routine(bot)
         await item.process()
