@@ -14,7 +14,7 @@ console_handler.setLevel(logging.DEBUG)    # Send DEBUG and above to the console
 
 # Handler to write DEBUG and above to a file
 execution_date = datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
-file_handler = logging.FileHandler(this_file.parent / 'logs' / f'general-{execution_date}.log')
+file_handler = logging.FileHandler(this_file.parent.parent / 'logs' / f'general-{execution_date}.log')
 file_handler.setLevel(logging.DEBUG)
 
 # Create formatters and add them to the handlers

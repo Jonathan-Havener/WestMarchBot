@@ -6,7 +6,7 @@ from discord.ext import commands
 from datetime import datetime, timedelta, timezone
 import json
 from properties.config import TOKEN, PREFIX
-from src.wm_logging import gen_logger
+from wm_logging import gen_logger
 #from NewDevlinProperties import *
 from properties.BrighthavenProperties import *
 
