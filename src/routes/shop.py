@@ -5,10 +5,8 @@ import sys
 import asyncio
 
 this_file = Path(__file__).parent
-shop_bot_root_path = this_file.parent / "logic"
-sys.path.append(str(shop_bot_root_path))
-from shop_bot import Shop as ShopLogic
-from shop_bot import MagicManager
+from logic.shop_bot import Shop as ShopLogic
+from logic.shop_bot import MagicManager
 
 
 class MagicItemEmbed(discord.Embed):
@@ -70,7 +68,8 @@ class Shop(commands.Cog):
     def __init__(self, bot):
         print("Shop initialized")
         self.bot = bot
-        magic_manager = MagicManager(source=this_file.parent / "data" / "Magic Item Distribution - Items.csv")
+        magic_manager = MagicManager(source=this_file.parent.parent / "data" /
+                                            "Magic Item Distribution - Items.csv")
         self._shop = ShopLogic(magic_manager_obj=magic_manager)
         self._shop.fill_inventory()
 
