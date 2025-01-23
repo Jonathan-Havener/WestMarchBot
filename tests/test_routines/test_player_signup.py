@@ -45,8 +45,8 @@ class PlayerSignupCase(unittest.IsolatedAsyncioTestCase):
     async def test_get_player_character(self):
         @PlayerSignupCase.bot.event
         async def on_ready():
-            thread = self.signup.quest_board.threads[1]
-            await self.signup.get_player_characters_from_thread(thread)
+            thread = self.signup.quest_board.threads[-2]
+            characters = await self.signup.get_player_characters_from_thread(thread)
             await PlayerSignupCase.bot.close()
 
         await PlayerSignupCase.bot.start(TOKEN, reconnect=True)
@@ -70,14 +70,14 @@ class PlayerSignupCase(unittest.IsolatedAsyncioTestCase):
                    and not player.bot
             }
 
-            player_characters = await self.get_player_characters_from_thread(thread)
+            player_characters = await self.signup.get_player_characters_from_thread(thread)
 
-            embed = self.build_embed(thread, these_player_quests, player_characters)
+            embed = self.signup.build_embed(thread, these_player_quests, player_characters)
 
             admin_user_id = 309102962234359829
             admin = self.bot.get_user(admin_user_id)
 
-            await admin.send(embed)
+            await admin.send(embed=embed)
 
             await PlayerSignupCase.bot.close()
 
