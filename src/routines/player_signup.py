@@ -2,6 +2,7 @@ import yaml
 from pathlib import Path
 import sys
 import asyncio
+import re
 from datetime import datetime, timedelta, timezone
 
 from discord.ext import commands
@@ -19,7 +20,50 @@ class PlayerSignup(Routine):
         bot_updates_channel_id = 1290373594781716554
         return self.bot.get_channel(bot_updates_channel_id)
 
-    async def get_players_quest_history(self):
+    async def _get_character(self, message: discord.Message, character_info) -> None:
+        link_pattern = r"(?P<jump_url>https://discord.com/channels/918112437331427358/(?P<character_thread>\d+))"
+        id_pattern = r"<#(?P<character_thread>\d+)>"
+
+        match = re.search(link_pattern, message.content) or re.search(id_pattern, message.content)
+
+        if match:
+            character_thread = await self.bot.fetch_channel(match.group("character_thread"))
+            character_info.update({message.author: character_thread})
+
+    async def get_player_characters_from_thread(self, thread: discord.Thread) -> dict:
+        characters = {}
+        async for message in thread.history(limit=None):
+            await self._get_character(message, characters)
+
+        return characters
+
+    async def _get_players_from_quest(self, quest_thread, player_quests, quest_exclusions):
+        async for message in quest_thread.history(limit=None):
+            if message.author == quest_thread.owner:
+                continue
+
+            if message.author.bot:
+                continue
+
+            if message.author not in player_quests:
+                player_quests[message.author] = []
+
+            if quest_thread in player_quests[message.author]:
+                continue
+
+            if quest_thread.owner not in [user for reaction in message.reactions async for user in reaction.users()]:
+                continue
+
+            # Don't include quests players have said they didn't actually attend
+            if (
+                    message.author.id in quest_exclusions
+                    and quest_thread.id in quest_exclusions[message.author.id]
+            ):
+                continue
+
+            player_quests[message.author].append(quest_thread)
+
+    async def get_players_quest_history(self) -> dict:
         player_quests = {}
 
         # Get the quests players haven't actually been on.
@@ -27,32 +71,12 @@ class PlayerSignup(Routine):
         with open(quest_exclusions_path, "r") as file:
             quest_exclusions = yaml.safe_load(file)
 
+        tasks = []
         # Remove the "about" thread
         for thread in self.quest_board.threads[1:]:
-            async for message in thread.history(limit=None):
-                if message.author == thread.owner:
-                    continue
+            tasks.append(self._get_players_from_quest(thread, player_quests, quest_exclusions))
 
-                if message.author.bot:
-                    continue
-
-                if message.author not in player_quests:
-                    player_quests[message.author] = []
-
-                if thread in player_quests[message.author]:
-                    continue
-
-                if thread.owner not in [user for reaction in message.reactions async for user in reaction.users()]:
-                    continue
-
-                # Don't include quests players have said they didn't actually attend
-                if (message.author.id in quest_exclusions
-                        and thread.id in quest_exclusions[message.author.id]
-                ):
-                    continue
-
-                player_quests[message.author].append(thread)
-
+        await asyncio.gather(*tasks)
         return player_quests
 
     async def get_last_bot_message(self, messages) -> [discord.Message, None]:
@@ -63,7 +87,7 @@ class PlayerSignup(Routine):
 
         return bot_message
 
-    async def send_embed(self, thread, these_player_quests, bot_message=None):
+    def build_embed(self, thread, these_player_quests, player_characters) -> discord.Embed:
         embed = discord.Embed(
             title=thread.name,
             description=f"{thread.owner.display_name}, here is a digest of the players interested in your quest.\n"
@@ -77,7 +101,8 @@ class PlayerSignup(Routine):
         ]
         details = ''
         for player in attending_this_quest:
-            details += f"- {player.display_name}\n"
+            character_text = f" as {player_characters[player].jump_url}" if player in player_characters else ""
+            details += f"- {player.display_name}{character_text}\n"
         embed.add_field(
             name=f"**{len(attending_this_quest)} player{'s' if len(attending_this_quest) > 1 else ''} "
                  f"are attending this quest!**",
@@ -104,10 +129,7 @@ class PlayerSignup(Routine):
                 inline=False
             )
 
-        if bot_message:
-            await bot_message.edit(embed=embed)
-        else:
-            await thread.send(embed=embed)
+        return embed
 
     async def process(self):
         player_quests = await self.get_players_quest_history()
@@ -127,10 +149,16 @@ class PlayerSignup(Routine):
                 for player in thread_participants
                 if player in player_quests
                    and not player.bot
-
             }
 
             these_player_quests = dict(sorted(these_player_quests.items(), key=lambda item: len(item[1])))
 
+            player_characters = await self.get_player_characters_from_thread(thread)
+
+            embed = self.build_embed(thread, these_player_quests, player_characters)
+
             bot_message = await self.get_last_bot_message(messages)
-            await self.send_embed(thread, these_player_quests, bot_message)
+            if bot_message:
+                await bot_message.edit(embed=embed)
+            else:
+                await thread.send(embed=embed)
