@@ -8,5 +8,5 @@ EXPIRY_FILE = 'bright_haven_role_expiry.json'
 expiry_path = Path(__file__).parent.parent / "logs" / EXPIRY_FILE
 
 # days
-role_duration = 90
-role_warning = 20
+role_duration = 30
+role_warning = 10

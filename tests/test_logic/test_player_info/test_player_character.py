@@ -27,7 +27,7 @@ class PlayerCharacterTestCase(unittest.IsolatedAsyncioTestCase):
         """Set up test case."""
         if not self.bot_task:  # Start the bot only once
             await self.start_bot()
-        ming_id = 1307781750772072599
+        ming_id = 1296120167784255570
         self.jorden_ming = PlayerCharacter(self.bot, ming_id)
         await self.jorden_ming.process_history()
 
