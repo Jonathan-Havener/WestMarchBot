@@ -1,18 +1,19 @@
 # main.py
 import time
-
-import discord
-from discord.ext import commands
+import os
 from datetime import datetime
 import asyncio
 
-from properties.config import TOKEN, PREFIX
+import discord
+from discord.ext import commands
+
+from properties.config import PREFIX
 # add the cogs context for calls to __subclasses__
 from routes import *
 from routines.player_signup import PlayerSignup
 from role_logger import *
 
-
+TOKEN = os.environ.get("API_TOKEN")
 intents = discord.Intents.all()
 intents.members = True
 intents.reactions = True
