@@ -86,6 +86,19 @@ async def on_message(message):
         for cog in player_cogs:
             await cog.ask_level()(None)
 
+    if "!update_rolls" in message.content:
+        print(f"{datetime.now()} - Running Role Logger")
+        await update_role_expiry(bot)
+        await check_role_expiry(bot)
+        await notify_member_count(bot)
+        await notify_new_members(bot)
+        await notify_expiring_members(bot)
+        await notify_lost_members(bot)
+        save_expiry_data(role_expiry)
+        print(f"{datetime.now()} - Finished running Role Logger")
+
+        await message.delete()
+
 
 @bot.event
 async def on_thread_create(thread):
