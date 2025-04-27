@@ -18,8 +18,13 @@ class PlayerSignup(Routine):
         bot_updates_channel_id = 1290373594781716554
         return self.bot.get_channel(bot_updates_channel_id)
 
+    @property
+    def request_board(self):
+        request_channel_id = 1359554902451425280
+        return self.bot.get_channel(request_channel_id)
+
     async def _get_character(self, message: discord.Message, character_info) -> None:
-        link_pattern = r"(?P<jump_url>https://discord.com/channels/918112437331427358/(?P<character_thread>\d+))"
+        link_pattern = r"(?P<jump_url>https://discord(?:app)?.com/channels/918112437331427358/(?P<character_thread>\d+))"
         id_pattern = r"<#(?P<character_thread>\d+)>"
 
         match = re.search(link_pattern, message.content) or re.search(id_pattern, message.content)
@@ -132,7 +137,7 @@ class PlayerSignup(Routine):
     async def process(self):
         player_quests = await self.get_players_quest_history()
 
-        for thread in self.quest_board.threads[::-1]:
+        for thread in self.quest_board.threads[::-1] + self.request_board.threads[::-1]:
             if thread.created_at < (datetime.now() - timedelta(days=5)).replace(tzinfo=timezone.utc):
                 break
 

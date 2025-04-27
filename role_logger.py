@@ -2,10 +2,8 @@
 
 import discord
 from discord import utils
-from discord.ext import commands
 from datetime import datetime, timedelta, timezone
 import json
-from properties.config import TOKEN, PREFIX
 from wm_logging import gen_logger
 #from NewDevlinProperties import *
 from properties.BrighthavenProperties import *
@@ -16,7 +14,7 @@ intents.guilds = True
 intents.messages = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+# bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
 
 def load_expiry_data():
@@ -32,6 +30,7 @@ def load_expiry_data():
     else:
         with open(expiry_path, 'r') as file:
             data = json.load(file)
+            data.update({"role_duration": role_duration})
     return data
 
 
@@ -43,20 +42,20 @@ def save_expiry_data(data):
 role_expiry = load_expiry_data()
 
 
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user}')
-    await update_role_expiry()
-    await check_role_expiry()
-    await notify_member_count()
-    await notify_new_members()
-    await notify_expiring_members()
-    await notify_lost_members()
-    save_expiry_data(role_expiry)
-    await bot.close()  # Close the bot after the check
+# @bot.event
+# async def on_ready():
+#     print(f'Logged in as {bot.user}')
+#     await update_role_expiry()
+#     await check_role_expiry()
+#     await notify_member_count()
+#     await notify_new_members()
+#     await notify_expiring_members()
+#     await notify_lost_members()
+#     save_expiry_data(role_expiry)
+#     await bot.close()  # Close the bot after the check
 
 
-async def notify_member_count():
+async def notify_member_count(bot):
     channel = bot.get_channel(bot_updates_channel_id)
 
     message = f"This campaign currently has {len(role_expiry['active users'])} Adventurers!"
@@ -65,7 +64,7 @@ async def notify_member_count():
         await channel.send(message)
 
 
-async def notify_new_members():
+async def notify_new_members(bot):
     if len(role_expiry['new users']) == 0:
         return
 
@@ -80,18 +79,18 @@ async def notify_new_members():
         await channel.send(message)
 
 
-async def notify_expiring_members():
+async def notify_expiring_members(bot):
     channel = bot.get_channel(bot_updates_channel_id)
     if len(role_expiry['expiring users']) == 0:
         return
 
     expiring_members = '\n'.join(
         [
-            f"- {member} has "
-            f"{(datetime.fromisoformat(role_expiry['expiring users'][member]) + timedelta(days=90) - datetime.utcnow().replace(tzinfo=timezone.utc)).days}"
+            f"- {utils.get(bot.get_guild(GUILD_ID).members, name=member).display_name} has "
+            f"{(datetime.fromisoformat(role_expiry['expiring users'][member]) + timedelta(days=role_duration) - datetime.utcnow().replace(tzinfo=timezone.utc)).days}"
             f" days to join a quest!"
             for member in role_expiry['expiring users'].keys()
-            ])
+        ])
 
     message = (f"{len(role_expiry['expiring users'])} "
                f"{'have licenses' if len(role_expiry['expiring users']) > 1 else 'has a license'} "
@@ -102,13 +101,14 @@ async def notify_expiring_members():
         await channel.send(message)
 
 
-async def notify_lost_members():
+async def notify_lost_members(bot):
     if len(role_expiry['expired users']) == 0:
         return
 
     channel = bot.get_channel(bot_updates_channel_id)
 
-    fallen_members = '\n'.join(['- ' + member for member in role_expiry['expired users'].keys()])
+    fallen_members = '\n'.join(['- ' + utils.get(bot.get_guild(GUILD_ID).members, name=member).display_name
+                                for member in role_expiry['expired users'].keys()])
 
     message = (f"Rest in peace, our {len(role_expiry['expired users'])} fallen adventurers. "
                f"It has been more than {role_duration} days since we've seen you.\n"
@@ -118,7 +118,7 @@ async def notify_lost_members():
         await channel.send(message)
 
 
-async def update_role_expiry():
+async def update_role_expiry(bot):
     guild = bot.get_guild(GUILD_ID)
     if not guild:
         gen_logger.error(f"Guild not found!")
@@ -147,7 +147,7 @@ async def update_role_expiry():
                 await process_thread(thread, role)
 
 
-async def check_role_expiry():
+async def check_role_expiry(bot):
     role_expiry["expired users"] = {}
     role_expiry["expiring users"] = {}
     role_expiry["new users"] = {}
@@ -211,4 +211,4 @@ async def process_thread(thread, role):
                 role_expiry["active users"][str(message.author.name)] = message_date
 
 
-bot.run(TOKEN)
+# bot.run(TOKEN)
