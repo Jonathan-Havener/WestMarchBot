@@ -1,5 +1,4 @@
 secrets_config.py
-properties/config.py
 .idea
 *.db
 
