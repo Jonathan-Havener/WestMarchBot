@@ -1,11 +1,9 @@
 import yaml
 from pathlib import Path
-import sys
 import asyncio
 import re
 from datetime import datetime, timedelta, timezone
 
-from discord.ext import commands
 import discord
 
 from .routine import Routine

@@ -4,7 +4,8 @@ import discord
 from discord.ext import commands
 from properties.config import TOKEN, PREFIX
 # add the cogs context for calls to __subclasses__
-from src.routines import *
+from routes import *
+from routines import *
 
 intents = discord.Intents.all()
 intents.members = True
@@ -22,12 +23,20 @@ async def on_ready():
     for cog in commands.Cog.__subclasses__():
         module_name = cog.__module__.split(".")[0]
         if module_name == "routes":
-            await bot.add_cog(cog(bot))
+            if cog.__name__ == "PlayerCharacter":
+                player_character_thread_id = 1293034430968889477
+                player_character_thread = bot.get_channel(player_character_thread_id)
+                for thread in player_character_thread.threads:
+                    pc = cog(bot, thread.id)
+                    await pc.process_history()
+                    await bot.add_cog(pc)
+            else:
+                await bot.add_cog(cog(bot))
 
     # routines=[routine(bot).process() for routine in Routine.__subclasses__()]
-    for routine in Routine.__subclasses__():
-        item = routine(bot)
-        await item.process()
+    # for routine in Routine.__subclasses__():
+    #     item = routine(bot)
+    #     await item.process()
     # await asyncio.gather(routine(bot).process() for routine in Routine.__subclasses__())
 
 

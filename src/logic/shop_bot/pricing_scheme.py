@@ -9,7 +9,7 @@ class PricingScheme(AnsibleLike):
         self.rarity = None
         self.impact = None
         if not source:
-            source = Path(__file__).parent.parent.parent / "data" / "magic_item_prices.yml"
+            source = Path(__file__).parent.parent.parent.parent / "data" / "magic_item_prices.yml"
         super().__init__(source)
         self._load_properties(source)
 
