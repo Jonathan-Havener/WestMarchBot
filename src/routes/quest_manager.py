@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import re
 from .player_character import PlayerCharacter
+from .player import Player
 
 
 class QuestManager(commands.Cog):
@@ -19,8 +20,6 @@ class QuestManager(commands.Cog):
         self.__cog_name__ = f"Quest-{quest_id}"
 
         self._queried_players = []
-
-        # self.bot.add_command(self.ask_level())
 
     async def get_quest_thread(self):
         if self._quest_thread:
@@ -70,7 +69,7 @@ class QuestManager(commands.Cog):
 
         quest_thread = await self.get_quest_thread()
         # Update the embed
-        embed = self.build_embed(quest_thread)
+        embed = await self.build_embed(quest_thread)
         bot_message = await self.bot_message()
         if bot_message:
             await bot_message.edit(embed=embed)
@@ -105,13 +104,13 @@ class QuestManager(commands.Cog):
         if message.author.id in [character.owner.id for character in self._adventurers]:
             return
 
-        player_cog = self.bot.get_cog(f"Player-{message.author.id}")
+        player_cog: Player = self.bot.get_cog(f"Player-{message.author.id}")
 
         # Author doesn't have a character
         if not player_cog:
-            return
+            player_cog = Player(self.bot, message.author.id)
 
-        player_characters = await player_cog.player_cogs()
+        player_characters = await player_cog.character_cogs()
 
         if not player_characters:
             return
@@ -175,7 +174,7 @@ class QuestManager(commands.Cog):
         if matches:
             quest_thread = await self.get_quest_thread()
             # Update the embed
-            embed = self.build_embed(quest_thread)
+            embed = await self.build_embed(quest_thread)
             bot_message = await self.bot_message()
             if bot_message:
                 await bot_message.edit(embed=embed)
@@ -203,7 +202,7 @@ class QuestManager(commands.Cog):
 
         return bot_message
 
-    def build_embed(self, thread) -> discord.Embed:
+    async def build_embed(self, thread) -> discord.Embed:
         embed = discord.Embed(
             title=thread.name,
             description=f"{thread.owner.display_name}, here is a digest of the players interested in your quest."
@@ -213,7 +212,11 @@ class QuestManager(commands.Cog):
         for player in self._adventurers:
             player_cog = self.bot.get_cog(f"PlayerCharacter-{player.id}")
 
-            character_text = (f"as {player.jump_url}. Level - {player_cog.level} "
+            # Author doesn't have a character
+            if not player_cog:
+                player_cog = Player(self.bot, player.id)
+
+            character_text = (f"as {player.jump_url}. Level - {await player_cog.level()} "
                               f"{'/'.join([tag.name for tag in player.applied_tags if tag.name != 'Player Character'])}")
             details += f"- {player.owner.display_name} {character_text}\n"
         embed.add_field(

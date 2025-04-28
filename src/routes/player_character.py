@@ -1,6 +1,3 @@
-import yaml
-from pathlib import Path
-import asyncio
 import re
 
 from discord.ext import commands
@@ -18,19 +15,104 @@ class PlayerCharacter(commands.Cog):
 
         self._last_message = None
 
-        self._setup_subscriptions()
-
         self.__cog_name__ = f"PlayerCharacter-{profile_id}"
 
         self.bot.add_command(self.ask_level())
 
-    @property
-    def quests(self) -> list:
+    async def _get_quests_from_msg(self, message) -> list[discord.Thread]:
+        """
+
+        :param message:
+        :type message:
+        :return:
+        :rtype:
+        """
+        quests = []
+
+        pattern = (r"https://discord(?:app)?.com/channels/918112437331427358/(?P<quest_thread_url>\d+)|"
+                   r"<#(?P<quest_thread_id>\d+)>")
+
+        matches = re.findall(pattern, message.content)
+        matches = [item for match in matches for item in match if item]
+
+        for thread_id in matches:
+            try:
+                quest: discord.Thread = await self.bot.fetch_channel(thread_id)
+            except discord.errors.NotFound:
+                print(f"Quest not found in message.\n{message.content}")
+                continue
+            except Exception as e:
+                print(f"Encountered an unknown error looking for quest in msg.\n{message.content}")
+                continue
+
+            if not hasattr(quest, "parent"):
+                continue
+            if quest.parent.id not in [1290373594781716554, 1359554902451425280]:
+                continue
+
+            quests.append(quest)
+
+        return quests
+
+    async def quests(self) -> list:
+        """
+        # TODO: need to search history when this is called
+        :return:
+        :rtype:
+        """
+        if not self._quests:
+            await self._populate_quest_history()
+
         return self._quests
 
-    @property
-    def level(self) -> int:
-        return 3 + int(len(self.quests) / 4)
+    async def _populate_quest_history(self) -> None:
+        this_thread = await self.get_character_thread()
+        async for message in this_thread.history(limit=None):
+            quests = await self._get_quests_from_msg(message)
+            for quest in quests:
+                if quest in self._quests:
+                    continue
+                self._quests.append(quest)
+
+    async def _add_quest(self, quest: discord.Thread) -> None:
+        this_thread = await self.get_character_thread()
+
+        # Make sure we've initialized the quest from history before we add one
+        if not self._quests:
+            await self._populate_quest_history()
+
+        level_before = await self.level()
+        self._quests.append(quest)
+        level_after = await self.level()
+
+        if level_after != level_before:
+            await this_thread.send(f"{this_thread.name} hit level {self.level}! Congrats :)")
+
+    async def level(self) -> int:
+        return 3 + int(len(await self.quests()) / 4)
+
+    async def get_character_thread(self) -> discord.Thread:
+        if not self._character_thread:
+            self._character_thread = await self.bot.fetch_channel(self._profile_id)
+
+        return self._character_thread
+
+    @commands.Cog.listener(name="on_message")
+    async def handle_quest_message(self, message):
+
+        # Only process messages from this character's character profile
+        if not self._profile_id or not message.channel.id == self._profile_id:
+            return
+
+        quests = await self._get_quests_from_msg(message)
+        for quest in quests:
+            if quest in self._quests:
+                continue
+            await self._add_quest(quest)
+
+    @commands.Cog.listener(name="on_message_edit")
+    async def _handle_quest_message_update(self, message_before, message_after):
+        await self.handle_quest_message(message_after)
 
     def ask_level(self):
         """
@@ -48,87 +130,3 @@ class PlayerCharacter(commands.Cog):
             await admin.send(f"{this_thread.jump_url} by {this_thread.owner.display_name} is level {self.level}")
 
         return dynamic_command
-
-    async def add_quest(self, quest, notify: bool):
-        # admin_user_id = 309102962234359829
-        # admin = self.bot.get_user(admin_user_id)
-        this_thread = await self.get_character_thread()
-
-        level_before = self.level
-        self._quests.append(quest)
-
-        # await admin.send(f"{this_thread.jump_url} went on the quest {quest.jump_url}!")
-        #
-        if notify and self.level != level_before:
-            await this_thread.send(f"{this_thread.name} hit level {self.level}! Congrats :)")
-
-    @commands.Cog.listener(name="on_message")
-    async def _handle_quest_message(self, message, notify: bool = True):
-
-        # Only process messages from this character's character profile
-        if not self._profile_id or not message.channel.id == self._profile_id:
-            return
-
-        pattern = (r"https://discord(?:app)?.com/channels/918112437331427358/(?P<quest_thread_url>\d+)|"
-                   r"<#(?P<quest_thread_id>\d+)>")
-
-        matches = re.findall(pattern, message.content)
-        matches = [item for match in matches for item in match if item]
-
-        for thread_id in matches:
-            try:
-                quest = await self.bot.fetch_channel(thread_id)
-            except discord.errors.NotFound:
-                print(f"Quest not found in message.\n{message.content}")
-                continue
-            except Exception as e:
-                print(f"Encountered an unknown error looking for quest in msg.\n{message.content}")
-                continue
-
-            if not hasattr(quest, "parent"):
-                continue
-            if quest.parent.id not in [1290373594781716554, 1359554902451425280]:
-                continue
-            if quest in self._quests:
-                continue
-
-            await self.add_quest(quest, notify)
-
-    @commands.Cog.listener(name="on_message_edit")
-    async def _handle_quest_message_update(self, message_before, message_after):
-        await self._handle_quest_message(message_after)
-
-    # async def _handle_last_message(self, message):
-    #     # TODO
-    #     print(f"_handle_last_message processed {message}")
-
-    def _setup_subscriptions(self):
-        """
-        This initializes all the responses we may have for a message
-        This is primarily used when processing a history of messages sent before the cog was created
-        :return:
-        :rtype:
-        """
-        self._message_responses.append(self._handle_quest_message)
-        # self._message_responses.append(self._handle_last_message)
-
-    async def get_character_thread(self):
-        if self._character_thread:
-            return self._character_thread
-
-        self._character_thread = await self.bot.fetch_channel(self._profile_id)
-        return self._character_thread
-
-    async def process_history(self):
-        this_thread = await self.get_character_thread()
-        print(f"Processing quest history for {this_thread.owner.display_name}'s character {this_thread.name}")
-        async for message in this_thread.history(limit=None):
-            await self.process_message(message)
-
-    async def process_message(self, message):
-        """
-        This invokes all the on_message methods as if the message was just sent.
-        This is used to process history.
-        """
-        for callback in self._message_responses:
-            await callback(message, notify=False)
