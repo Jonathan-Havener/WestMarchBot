@@ -1,14 +1,16 @@
 from discord.ext import commands
 import discord
 import re
-from .player_character import PlayerCharacter
+
+from .player_factory import PlayerFactory
 
 
 class QuestManager(commands.Cog):
-    def __init__(self, bot: commands.Bot, quest_id):
+    def __init__(self, bot: commands.Bot, quest_id, player_factory: PlayerFactory):
         self.bot = bot
         self._quest_id = quest_id
         self._quest_thread = None
+        self.player_factory = player_factory
 
         self._adventurers = []
         self._message_responses = []
@@ -20,8 +22,6 @@ class QuestManager(commands.Cog):
 
         self._queried_players = []
 
-        # self.bot.add_command(self.ask_level())
-
     async def get_quest_thread(self):
         if self._quest_thread:
             return self._quest_thread
@@ -29,12 +29,28 @@ class QuestManager(commands.Cog):
         self._quest_thread = await self.bot.fetch_channel(self._quest_id)
         return self._quest_thread
 
-    async def _add_adventurer(self, character_thread_id, character):
-        self._adventurers.append(character)
-        player_cog = self.bot.get_cog(f"PlayerCharacter-{character_thread_id}")
-        if not player_cog:
-            player_cog = PlayerCharacter(self.bot, character_thread_id)
-            await self.bot.add_cog(player_cog)
+    async def _add_adventurer(self, character_thread_id: int):
+        character = await self.bot.fetch_channel(character_thread_id)
+        if not hasattr(character, "parent"):
+            return
+        if character.parent.id != 1293034430968889477:
+            return
+        if character in self._adventurers:
+            return
+
+        player_cog, player_was_created = await self.player_factory.get_cog(character.owner.id)
+        # Creates the character if it didn't already exist
+        char_cog, char_was_created = await player_cog.character_factory.get_cog(character_thread_id)
+
+        self._adventurers.append(char_cog)
+
+    def _get_character_threads_from_message(self, message) -> list[int]:
+        pattern = (r"https://discord(?:app)?.com/channels/918112437331427358/(?P<character_thread_url>\d+)|"
+                   r"<#(?P<character_thread_id>\d+)>")
+
+        matches = re.findall(pattern, message.content)
+        matches = [item for match in matches for item in match if item]
+        return matches
 
     async def bot_message(self):
         if self._bot_message:
@@ -58,19 +74,18 @@ class QuestManager(commands.Cog):
 
         if reaction.emoji == "❌":
             await reaction.message.delete()
+            return
 
         emoji_map = {'1️⃣':1, '2️⃣':2, '3️⃣':3, '4️⃣':4, '5️⃣':5}
         lines = reaction.message.content.split("\n")
         selection = next(line for line in lines[2:] if str(emoji_map[reaction.emoji]) in line.split(":")[0])
 
         thread_id = selection.split(")")[0].split("/")[-1]
-        character = await self.bot.fetch_channel(thread_id)
-
-        await self._add_adventurer(thread_id, character)
+        await self._add_adventurer(thread_id)
 
         quest_thread = await self.get_quest_thread()
         # Update the embed
-        embed = self.build_embed(quest_thread)
+        embed = await self.build_embed(quest_thread)
         bot_message = await self.bot_message()
         if bot_message:
             await bot_message.edit(embed=embed)
@@ -78,6 +93,54 @@ class QuestManager(commands.Cog):
             await quest_thread.send(embed=embed)
 
         await reaction.message.delete()
+
+    async def _send_character_selection_message(self, player: discord.User, player_characters):
+        quest_thread = await self.get_quest_thread()
+        emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
+
+        message_content = ""
+
+        timed_characters = {}
+        for character in player_characters:
+            char_thread = await character.get_character_thread()
+
+            non_player_tags = ["NPC", "Deceased", "pregen"]
+            actual_tags = [tag.name for tag in char_thread.applied_tags]
+            # Ignore this character if it has any of these tags
+            if not actual_tags or not set(non_player_tags).isdisjoint(set(actual_tags)):
+                continue
+
+            last_message = next(iter([msg async for msg in char_thread.history(limit=1)]), None)
+            if not last_message:
+                continue
+            last_message_time = last_message.edited_at or last_message.created_at
+            timed_characters.update({last_message_time: character})
+
+        recent_characters = [timed_characters[k] for k in sorted(timed_characters.keys(), reverse=True)]
+
+        for index, character_cog in enumerate(recent_characters[:len(emojis)]):
+            char_thread = await character_cog.get_character_thread()
+            message_content += (
+                f"{index+1} : "
+                f"[{char_thread.name}]"
+                f"({char_thread.jump_url}) "
+                f"Level {await character_cog.level()} "
+            )
+            character_tags = [
+                tag.name
+                for tag in char_thread.applied_tags
+                if tag.name != 'Player Character'
+            ]
+            message_content += "/".join(character_tags)
+            message_content += "\n"
+
+        message_content = f"{player.mention}, who would you like to play?\n" + message_content
+
+        player_req_msg = await quest_thread.send(f"{quest_thread.name}\n{message_content}")
+        for idx, player_option in enumerate(recent_characters[:len(emojis)]):
+            await player_req_msg.add_reaction(emojis[idx])
+
+        await player_req_msg.add_reaction("❌")
 
     @commands.Cog.listener(name="on_message")
     async def _handle_nosignup_message(self, message):
@@ -89,60 +152,26 @@ class QuestManager(commands.Cog):
             return
 
         quest_thread = await self.get_quest_thread()
-        if message.author == quest_thread.owner:
+        if message.author == quest_thread.owner and message.author.id != 309102962234359829:
             return
 
-        pattern = (r"https://discord(?:app)?.com/channels/918112437331427358/(?P<character_thread_url>\d+)|"
-                   r"<#(?P<character_thread_id>\d+)>")
+        mentioned_characters = self._get_character_threads_from_message(message)
 
-        matches = re.findall(pattern, message.content)
-        matches = [item for match in matches for item in match if item]
-
-        if matches:
+        if mentioned_characters:
             return
 
         # Player has already sent a character in this thread
-        if message.author.id in [character.owner.id for character in self._adventurers]:
+        if message.author.id in [character.player_cog.player_id for character in self._adventurers]:
             return
 
-        player_cog = self.bot.get_cog(f"Player-{message.author.id}")
+        player_cog, was_created = await self.player_factory.get_cog(message.author.id)
 
-        # Author doesn't have a character
-        if not player_cog:
-            return
-
-        player_characters = await player_cog.player_cogs()
+        player_characters = await player_cog.character_cogs()
 
         if not player_characters:
             return
 
-        emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
-
-        message_content = ""
-
-        for index, character_cog in enumerate(player_characters):
-            char_thread = await character_cog.get_character_thread()
-            message_content += (
-                f"{index+1} : "
-                f"[{char_thread.name}]"
-                f"({char_thread.jump_url}) "
-                f"Level {character_cog.level} "
-            )
-            character_tags = [
-                tag.name
-                for tag in char_thread.applied_tags
-                if tag.name != 'Player Character'
-            ]
-            message_content += "/".join(character_tags)
-            message_content += "\n"
-
-        message_content = f"{message.author.mention}, who would you like to play?\n" + message_content
-
-        player_req_msg = await quest_thread.send(f"{quest_thread.name}\n{message_content}")
-        for idx, player_option in enumerate(player_characters[:5]):
-            await player_req_msg.add_reaction(emojis[idx])
-
-        await player_req_msg.add_reaction("❌")
+        await self._send_character_selection_message(message.author, player_characters)
 
         self._queried_players.append(message.author.id)
 
@@ -156,26 +185,15 @@ class QuestManager(commands.Cog):
         if message.author.bot:
             return
 
-        pattern = (r"https://discord(?:app)?.com/channels/918112437331427358/(?P<character_thread_url>\d+)|"
-                   r"<#(?P<character_thread_id>\d+)>")
+        mentioned_characters = self._get_character_threads_from_message(message)
 
-        matches = re.findall(pattern, message.content)
-        matches = [item for match in matches for item in match if item]
+        for thread_id in mentioned_characters:
+            await self._add_adventurer(thread_id)
 
-        for thread_id in matches:
-            character = await self.bot.fetch_channel(thread_id)
-            if not hasattr(character, "parent"):
-                continue
-            if character.parent.id != 1293034430968889477:
-                continue
-            if character in self._adventurers:
-                continue
-            await self._add_adventurer(thread_id, character)
-
-        if matches:
+        if mentioned_characters:
             quest_thread = await self.get_quest_thread()
             # Update the embed
-            embed = self.build_embed(quest_thread)
+            embed = await self.build_embed(quest_thread)
             bot_message = await self.bot_message()
             if bot_message:
                 await bot_message.edit(embed=embed)
@@ -203,19 +221,26 @@ class QuestManager(commands.Cog):
 
         return bot_message
 
-    def build_embed(self, thread) -> discord.Embed:
+    async def build_embed(self, thread) -> discord.Embed:
         embed = discord.Embed(
             title=thread.name,
             description=f"{thread.owner.display_name}, here is a digest of the players interested in your quest."
         )
 
         details = ''
-        for player in self._adventurers:
-            player_cog = self.bot.get_cog(f"PlayerCharacter-{player.id}")
+        for adventurer in self._adventurers:
+            character_thread = await adventurer.get_character_thread()
+            url = character_thread.jump_url
 
-            character_text = (f"as {player.jump_url}. Level - {player_cog.level} "
-                              f"{'/'.join([tag.name for tag in player.applied_tags if tag.name != 'Player Character'])}")
-            details += f"- {player.owner.display_name} {character_text}\n"
+            character_tags = [
+                tag.name
+                for tag in character_thread.applied_tags
+                if tag.name != 'Player Character'
+            ]
+            character_tag_text = f"{'/'.join(character_tags)}"
+
+            character_text = f"as {url}. Level - {await adventurer.level()} {character_tag_text}"
+            details += f"- {character_thread.owner.display_name} {character_text}\n"
         embed.add_field(
             name=f"**{len(self._adventurers)} player{'s' if len(self._adventurers) > 1 else ''} "
                  f"are interested in this quest!**",
