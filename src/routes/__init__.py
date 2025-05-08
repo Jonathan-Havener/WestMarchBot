@@ -5,3 +5,4 @@ from .quest_factory import QuestFactory
 from .player_character import PlayerCharacter
 from .player import Player
 from .shop import Shop
+from .player_factory import PlayerFactory

@@ -2,12 +2,14 @@ import discord
 
 from discord.ext import commands
 from .player_character import PlayerCharacter
+from .character_factory import CharacterFactory
 
 
 class Player(commands.Cog):
     def __init__(self, bot: commands.Bot, player_id):
         self.bot = bot
-        self._player_id = player_id
+        self.player_id = player_id
+        self.character_factory = CharacterFactory(self.bot, self)
 
         self.__cog_name__ = f"Player-{player_id}"
 
@@ -31,29 +33,8 @@ class Player(commands.Cog):
         return [
             thread
             for thread in self._player_profile_forum.threads + older_threads
-            if thread.owner and thread.owner.id == self._player_id
+            if thread.owner and thread.owner.id == self.player_id
         ]
-
-    async def _get_player_character_cog(self, char_thread_id: str) -> (PlayerCharacter, bool):
-        """
-
-        :param char_thread_id:
-        :type char_thread_id:
-        :return:
-        :rtype:
-        """
-        char_cog = self.bot.get_cog(f"PlayerCharacter-{char_thread_id}")
-        created = False
-
-        if not char_cog:
-            char_cog = PlayerCharacter(self.bot, char_thread_id)
-            await self.bot.add_cog(char_cog)
-            created = True
-
-        if char_cog not in self._player_cogs:
-            self._player_cogs.append(char_cog)
-
-        return char_cog, created
 
     async def character_cogs(self) -> list[PlayerCharacter]:
         """
@@ -63,7 +44,9 @@ class Player(commands.Cog):
         """
         if not self._player_cogs:
             for character_thread in await self._get_player_char_threads():
-                character_cog, _ = await self._get_player_character_cog(character_thread.id)
+                character_cog, was_created = await self.character_factory.get_cog(character_thread.id)
+                if was_created:
+                    self._player_cogs.append(character_cog)
 
         return self._player_cogs
 
@@ -77,17 +60,17 @@ class Player(commands.Cog):
         :rtype:
         """
         # If this player didn't create the thread
-        if not thread.owner.id == self._player_id:
+        if not thread.owner.id == self.player_id:
             return
 
         # If the thread isn't a character thread
-        player_profiles_id = 1293034430968889477
-        if thread.parent.id != player_profiles_id:
+        if thread.parent.id != self.character_factory.player_profiles_id:
             return
 
-        char_cog = PlayerCharacter(self.bot, thread.id)
-        self.bot.add_cog(char_cog)
-        self._player_cogs.append(char_cog)
+        char_cog, was_created = await self.character_factory.get_cog(thread.parent.id)
+
+        if was_created:
+            self._player_cogs.append(char_cog)
 
     def ask_level(self):
         """
@@ -95,13 +78,13 @@ class Player(commands.Cog):
         :return:
         :rtype:
         """
-        @commands.command(name=f"{self._player_id}-level")
+        @commands.command(name=f"{self.player_id}-level")
         async def dynamic_command(ctx):
             admin_user_id = 309102962234359829
             admin = self.bot.get_user(admin_user_id)
 
             num_quests = sum([len(await cog.quests()) for cog in await self.character_cogs()])
-            player = self.bot.get_user(self._player_id)
+            player = self.bot.get_user(self.player_id)
 
             await admin.send(f"{player.display_name} has gone on {num_quests} quests.")
             for cog in await self.character_cogs():

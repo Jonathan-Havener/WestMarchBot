@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
 from .quest_manager import QuestManager
+from .player_factory import PlayerFactory
 
 
 class QuestFactory(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: commands.Bot, player_factory: PlayerFactory):
         self.bot = bot
+        self.player_factory = player_factory
 
         quest_board_id = 1290373594781716554
         request_board_id = 1359554902451425280
@@ -16,7 +18,7 @@ class QuestFactory(commands.Cog):
         created = False
 
         if not quest_cog:
-            quest_cog = QuestManager(self.bot, quest_id)
+            quest_cog = QuestManager(self.bot, quest_id, self.player_factory)
             await self.bot.add_cog(quest_cog)
             created = True
 
@@ -46,6 +48,9 @@ class QuestFactory(commands.Cog):
         :return:
         :rtype:
         """
+        if not isinstance(message.channel, discord.Thread):
+            return
+
         if message.channel.parent.id not in self._quest_forums:
             return
 

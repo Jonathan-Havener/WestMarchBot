@@ -24,7 +24,10 @@ async def on_ready():
     admin = bot.get_user(admin_user_id)
     await admin.send(f"Bot reset at {datetime.now()}")
 
-    await bot.add_cog(QuestFactory(bot))
+    player_fact = PlayerFactory(bot)
+    await bot.add_cog(player_fact)
+    quest_fact = QuestFactory(bot, player_fact)
+    await bot.add_cog(quest_fact)
 
     # Initialize Player Character Cogs
     # player_character_thread_id = 1293034430968889477

@@ -5,9 +5,11 @@ import discord
 
 
 class PlayerCharacter(commands.Cog):
-    def __init__(self, bot, profile_id):
+    def __init__(self, bot, profile_id: int, player_cog):
         self.bot = bot
         self._profile_id = profile_id
+        self.player_cog = player_cog
+
         self._character_thread = None
 
         self._quests = []
