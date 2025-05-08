@@ -1,8 +1,7 @@
 from discord.ext import commands
 import discord
 import re
-from .player_character import PlayerCharacter
-from .player import Player
+
 from .player_factory import PlayerFactory
 
 
@@ -75,6 +74,7 @@ class QuestManager(commands.Cog):
 
         if reaction.emoji == "❌":
             await reaction.message.delete()
+            return
 
         emoji_map = {'1️⃣':1, '2️⃣':2, '3️⃣':3, '4️⃣':4, '5️⃣':5}
         lines = reaction.message.content.split("\n")
@@ -100,13 +100,31 @@ class QuestManager(commands.Cog):
 
         message_content = ""
 
-        for index, character_cog in enumerate(player_characters):
+        timed_characters = {}
+        for character in player_characters:
+            char_thread = await character.get_character_thread()
+
+            non_player_tags = ["NPC", "Deceased", "pregen"]
+            actual_tags = [tag.name for tag in char_thread.applied_tags]
+            # Ignore this character if it has any of these tags
+            if not actual_tags or not set(non_player_tags).isdisjoint(set(actual_tags)):
+                continue
+
+            last_message = next(iter([msg async for msg in char_thread.history(limit=1)]), None)
+            if not last_message:
+                continue
+            last_message_time = last_message.edited_at or last_message.created_at
+            timed_characters.update({last_message_time: character})
+
+        recent_characters = [timed_characters[k] for k in sorted(timed_characters.keys(), reverse=True)]
+
+        for index, character_cog in enumerate(recent_characters[:len(emojis)]):
             char_thread = await character_cog.get_character_thread()
             message_content += (
                 f"{index+1} : "
                 f"[{char_thread.name}]"
                 f"({char_thread.jump_url}) "
-                f"Level {character_cog.level} "
+                f"Level {await character_cog.level()} "
             )
             character_tags = [
                 tag.name
@@ -119,7 +137,7 @@ class QuestManager(commands.Cog):
         message_content = f"{player.mention}, who would you like to play?\n" + message_content
 
         player_req_msg = await quest_thread.send(f"{quest_thread.name}\n{message_content}")
-        for idx, player_option in enumerate(player_characters[:5]):
+        for idx, player_option in enumerate(recent_characters[:len(emojis)]):
             await player_req_msg.add_reaction(emojis[idx])
 
         await player_req_msg.add_reaction("❌")
@@ -134,7 +152,7 @@ class QuestManager(commands.Cog):
             return
 
         quest_thread = await self.get_quest_thread()
-        if message.author == quest_thread.owner:
+        if message.author == quest_thread.owner and message.author.id != 309102962234359829:
             return
 
         mentioned_characters = self._get_character_threads_from_message(message)
