@@ -3,8 +3,6 @@ from abc import abstractmethod
 import random
 from .pricing_scheme import PricingScheme
 
-
-
 from pathlib import Path
 from .ansible_like import AnsibleLike
 
