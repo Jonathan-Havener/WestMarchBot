@@ -14,7 +14,7 @@ class Shop(commands.Cog):
         print("Shop initialized")
         self.bot = bot
 
-        magic_manager = MagicManager(source=Path(__file__).parent.parent.parent.parent / "data" / "Magic Item Distribution - Items.csv")
+        magic_manager = MagicManager(source=Path(__file__).parent.parent.parent.parent / "data" / "dmg-magic-item-definitions.json")
         self._shop = ShopLogic(magic_manager_obj=magic_manager)
         self._shop.fill_inventory()
 

@@ -1,4 +1,4 @@
 filter:
-  item_type: [
-               Weapon
+  filterType: [
+    Weapon
   ]

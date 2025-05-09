@@ -18,10 +18,10 @@ class MagicItemEmbed(discord.Embed):
 
     def get_item_properties(self, magic_item) -> dict:
         prop = {
-            "Rarity": magic_item.rarity,
-            "Item Type": magic_item.item_type,
-            "Attunement": magic_item.attunement,
-            "impact": magic_item.impact
+            "Rarity": magic_item["rarity"],
+            "Item Type": magic_item["filterType"],
+            "Attunement": magic_item["canAttune"],
+            "url": magic_item["url"]
         }
         return prop
 
@@ -39,7 +39,7 @@ class MagicItemEmbed(discord.Embed):
             details += [f"**Price:** {listing['price']}"]
             details = "\n".join(details)
             self.add_field(
-                name=f"= **{listing['item'].name.title()}** =",
+                name=f"= **{listing['item']['name'].title()}** =",
                 value=details,
                 inline=False  # Ensures each item is listed on a new line
             )

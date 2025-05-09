@@ -13,7 +13,7 @@ class ShopView(ui.View):
     def update_buttons(self):
         self.clear_items()
         for idx, listing in enumerate(self.shop.inventory):
-            label = f"Purchase {listing['item'].name.title()}"
+            label = f"Purchase {listing['item']['name'].title()}"
 
             async def button_callback(interaction):
                 await self.interaction_handler(interaction)
@@ -38,12 +38,12 @@ class ShopView(ui.View):
         try:
             index = int(interaction.data['custom_id'])
             listing = self.shop.inventory[index]
-            item_name = listing['item'].name
+            item_name = listing['item']["name"]
             price = listing['price']
 
             # Update shop inventory
             self.shop.sell(item_name)
-            self.embed.items = [item for item in self.embed.items if item['item'].name != item_name]
+            self.embed.items = [item for item in self.embed.items if item['item']["name"] != item_name]
 
             # Refresh buttons after inventory changes
             self.update_buttons()

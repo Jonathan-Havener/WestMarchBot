@@ -1,5 +1,5 @@
 filter:
-  item_type: [
+  filterType: [
     Wondrous item
   ]
   rarity: [
