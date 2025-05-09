@@ -28,6 +28,7 @@ async def on_ready():
 
     await bot.add_cog(player_fact)
     await bot.add_cog(quest_fact)
+    await bot.add_cog(Shop(bot))
 
 
 @bot.event
@@ -54,5 +55,6 @@ async def on_message(message):
 
         await message.delete()
 
+    await bot.process_commands(message)
 
 bot.run(TOKEN)

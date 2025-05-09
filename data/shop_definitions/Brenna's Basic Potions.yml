@@ -1,6 +1,6 @@
 filter:
-  item_type: [
-               Potion
+  filterType: [
+    Potion
   ]
   rarity: [
     Common,

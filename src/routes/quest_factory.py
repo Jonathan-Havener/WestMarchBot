@@ -33,7 +33,9 @@ class QuestFactory(commands.Cog):
         :return:
         :rtype:
         """
-        if not thread.channel.parent or thread.channel.parent.id not in self._quest_forums:
+        if (not isinstance(thread, discord.Thread) or
+                not thread.parent or
+                thread.parent.id not in self._quest_forums):
             return
 
         _, _ = await self.get_cog(thread.id)
