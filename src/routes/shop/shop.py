@@ -1,3 +1,5 @@
+import logging
+
 from discord.ext import commands
 import discord
 from pathlib import Path
@@ -174,7 +176,7 @@ class ShopFilterBrowser(ui.View):
 class Shop(commands.Cog):
     def __init__(self, bot):
         self._shops = None
-        print("Shop initialized")
+        logging.info("Shop initialized")
         self.bot = bot
 
         self.shops_forum_id = 1370267223058419753
