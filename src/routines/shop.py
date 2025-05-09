@@ -4,7 +4,6 @@ from pathlib import Path
 import asyncio
 
 from ..logic.shop_bot import ShopBuilder
-from ..logic.shop_bot import MagicManager
 from .routine import Routine
 
 
