@@ -5,6 +5,7 @@ from discord.ext import commands
 import discord
 
 from .player_factory import PlayerFactory
+from .quest_signup.quest_signup_view import CharacterSelectionView
 
 
 class QuestManager(commands.Cog):
@@ -14,7 +15,7 @@ class QuestManager(commands.Cog):
         self._quest_thread = None
         self.player_factory = player_factory
 
-        self._adventurers = []
+        self._adventurers = set()
         self._message_responses = []
         self._bot_message = None
 
@@ -22,7 +23,7 @@ class QuestManager(commands.Cog):
 
         self.__cog_name__ = f"Quest-{quest_id}"
 
-        self._queried_players = []
+        self._queried_players = set([])
 
     async def get_quest_thread(self):
         if self._quest_thread:
@@ -44,7 +45,7 @@ class QuestManager(commands.Cog):
         # Creates the character if it didn't already exist
         char_cog, char_was_created = await player_cog.character_factory.get_cog(character_thread_id)
 
-        self._adventurers.append(char_cog)
+        self._adventurers.add(char_cog)
 
     def _get_character_threads_from_message(self, message) -> list[int]:
         pattern = (fr"https://discord(?:app)?.com/channels/{os.environ.get('SERVER_ID')}/(?P<character_thread_url>\d+)|"
@@ -61,40 +62,67 @@ class QuestManager(commands.Cog):
         self._bot_message = await self.get_adventurer_list_message(messages)
         return self._bot_message
 
-    @commands.Cog.listener(name="on_reaction_add")
-    async def on_reaction_add(self, reaction, user):
-        if not self._quest_id or not reaction.message.channel.id == self._quest_id:
-            return
-        if user.bot:
-            return
-        if not reaction.message.author.bot:
-            return
-        if "who would you like to play?" not in reaction.message.content:
-            return
-        if user.mention not in reaction.message.content:
-            return
+    def _setup_subscriptions(self):
+        """
+        This initializes all the responses we may have for a message
+        This is primarily used when processing a history of messages sent before the cog was created
+        :return:
+        :rtype:
+        """
+        self._message_responses.append(self._handle_signup_message)
 
-        if reaction.emoji == "❌":
-            await reaction.message.delete()
-            return
+    async def get_adventurer_list_message(self, messages) -> [discord.Message, None]:
+        bot_message = next((message
+                            for message in messages
+                            if message.author.bot and message.embeds and
+                            "players interested" in message.embeds[0].description),
+                           None)
 
-        emoji_map = {'1️⃣':1, '2️⃣':2, '3️⃣':3, '4️⃣':4, '5️⃣':5}
-        lines = reaction.message.content.split("\n")
-        selection = next(line for line in lines[2:] if str(emoji_map[reaction.emoji]) in line.split(":")[0])
+        return bot_message
 
-        thread_id = selection.split(")")[0].split("/")[-1]
-        await self._add_adventurer(thread_id)
+    async def build_embed(self, thread) -> discord.Embed:
+        embed = discord.Embed(
+            title=thread.name,
+            description=f"{thread.owner.display_name}, here is a digest of the players interested in your quest."
+        )
 
-        quest_thread = await self.get_quest_thread()
-        # Update the embed
-        embed = await self.build_embed(quest_thread)
-        bot_message = await self.bot_message()
-        if bot_message:
-            await bot_message.edit(embed=embed)
-        else:
-            await quest_thread.send(embed=embed)
+        details = ''
+        for adventurer in self._adventurers:
+            character_thread = await adventurer.get_character_thread()
+            url = character_thread.jump_url
 
-        await reaction.message.delete()
+            character_tags = [
+                tag.name
+                for tag in character_thread.applied_tags
+                if tag.name != 'Player Character'
+            ]
+            character_tag_text = f"{'/'.join(character_tags)}"
+
+            character_text = f"as {url}. Level - {await adventurer.level()} {character_tag_text}"
+            details += f"- {character_thread.owner.display_name} {character_text}\n"
+        embed.add_field(
+            name=f"**{len(self._adventurers)} player{'s' if len(self._adventurers) > 1 else ''} "
+                 f"are interested in this quest!**",
+            value=details,
+            inline=False
+        )
+
+        return embed
+
+    async def process_history(self):
+        this_thread = await self.get_quest_thread()
+        print(f"Processing quest history for {this_thread.owner.display_name}'s quest {this_thread.name}")
+        messages = [message async for message in this_thread.history(limit=None)]
+        for message in messages:
+            await self.process_message(message)
+
+    async def process_message(self, message):
+        """
+        This invokes all the on_message methods as if the message was just sent.
+        This is used to process history.
+        """
+        for callback in self._message_responses:
+            await callback(message)
 
     async def _send_character_selection_message(self, player: discord.User, player_characters):
         quest_thread = await self.get_quest_thread()
@@ -145,37 +173,83 @@ class QuestManager(commands.Cog):
         await player_req_msg.add_reaction("❌")
 
     @commands.Cog.listener(name="on_message")
+    async def signup(self, msg):
+        if not self._quest_id or msg.channel.id != self._quest_id:
+            return
+
+        if "!signup" not in msg.content:
+            return
+
+        quest_thread = await self.get_quest_thread()
+
+        player_cog, _ = await self.player_factory.get_cog(msg.author.id)
+        player_characters = await player_cog.character_cogs()
+
+        async def on_character_selected(thread_id):
+            await self._add_adventurer(thread_id)
+            embed = await self.build_embed(quest_thread)
+            bot_message = await self.bot_message()
+            if bot_message:
+                await bot_message.edit(embed=embed)
+            else:
+                await quest_thread.send(embed=embed)
+
+        embed = discord.Embed(
+            title="Who would you like to play?",
+            description="Choose one of your characters below:",
+            color=discord.Color.green()
+        )
+
+        view = await CharacterSelectionView.create(player_characters, msg.author, on_character_selected)
+        await msg.channel.send(content=msg.author.mention, embed=embed, view=view)
+        await msg.delete()
+
+        self._queried_players.add(msg.author.id)
+
+    @commands.Cog.listener(name="on_message")
     async def _handle_nosignup_message(self, message):
-        # Only process messages from this quest thread
-        if not self._quest_id or not message.channel.id == self._quest_id:
+        if not self._quest_id or message.channel.id != self._quest_id:
             return
 
         if message.author.id in self._queried_players:
             return
 
         quest_thread = await self.get_quest_thread()
-        if message.author == quest_thread.owner and message.author.id != int(os.environ.get("ADMIN_ID")):
+        if message.author == quest_thread.owner:
             return
 
         mentioned_characters = self._get_character_threads_from_message(message)
-
         if mentioned_characters:
             return
 
-        # Player has already sent a character in this thread
-        if message.author.id in [character.player_cog.player_id for character in self._adventurers]:
+        if message.author.id in [char.player_cog.player_id for char in self._adventurers]:
             return
 
-        player_cog, was_created = await self.player_factory.get_cog(message.author.id)
-
+        player_cog, _ = await self.player_factory.get_cog(message.author.id)
         player_characters = await player_cog.character_cogs()
 
         if not player_characters:
             return
 
-        await self._send_character_selection_message(message.author, player_characters)
+        async def on_character_selected(thread_id):
+            await self._add_adventurer(thread_id)
+            embed = await self.build_embed(quest_thread)
+            bot_message = await self.bot_message()
+            if bot_message:
+                await bot_message.edit(embed=embed)
+            else:
+                await quest_thread.send(embed=embed)
 
-        self._queried_players.append(message.author.id)
+        embed = discord.Embed(
+            title="Who would you like to play?",
+            description="Choose one of your characters below:",
+            color=discord.Color.green()
+        )
+
+        view = await CharacterSelectionView.create(player_characters, message.author, on_character_selected)
+        await message.channel.send(content=message.author.mention, embed=embed, view=view)
+
+        self._queried_players.add(message.author.id)
 
     @commands.Cog.listener(name="on_message")
     async def _handle_signup_message(self, message):
@@ -205,64 +279,3 @@ class QuestManager(commands.Cog):
     @commands.Cog.listener(name="on_message_edit")
     async def _handle_signup_message_update(self, message_before, message_after):
         await self._handle_signup_message(message_after)
-
-    def _setup_subscriptions(self):
-        """
-        This initializes all the responses we may have for a message
-        This is primarily used when processing a history of messages sent before the cog was created
-        :return:
-        :rtype:
-        """
-        self._message_responses.append(self._handle_signup_message)
-
-    async def get_adventurer_list_message(self, messages) -> [discord.Message, None]:
-        bot_message = next((message
-                            for message in messages
-                            if message.author.bot and message.embeds),
-                           None)
-
-        return bot_message
-
-    async def build_embed(self, thread) -> discord.Embed:
-        embed = discord.Embed(
-            title=thread.name,
-            description=f"{thread.owner.display_name}, here is a digest of the players interested in your quest."
-        )
-
-        details = ''
-        for adventurer in self._adventurers:
-            character_thread = await adventurer.get_character_thread()
-            url = character_thread.jump_url
-
-            character_tags = [
-                tag.name
-                for tag in character_thread.applied_tags
-                if tag.name != 'Player Character'
-            ]
-            character_tag_text = f"{'/'.join(character_tags)}"
-
-            character_text = f"as {url}. Level - {await adventurer.level()} {character_tag_text}"
-            details += f"- {character_thread.owner.display_name} {character_text}\n"
-        embed.add_field(
-            name=f"**{len(self._adventurers)} player{'s' if len(self._adventurers) > 1 else ''} "
-                 f"are interested in this quest!**",
-            value=details,
-            inline=False
-        )
-
-        return embed
-
-    async def process_history(self):
-        this_thread = await self.get_quest_thread()
-        print(f"Processing quest history for {this_thread.owner.display_name}'s quest {this_thread.name}")
-        messages = [message async for message in this_thread.history(limit=None)]
-        for message in messages:
-            await self.process_message(message)
-
-    async def process_message(self, message):
-        """
-        This invokes all the on_message methods as if the message was just sent.
-        This is used to process history.
-        """
-        for callback in self._message_responses:
-            await callback(message)

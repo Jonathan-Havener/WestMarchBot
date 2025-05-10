@@ -8,7 +8,7 @@ import discord
 class PlayerCharacter(commands.Cog):
     def __init__(self, bot, profile_id: int, player_cog):
         self.bot = bot
-        self._profile_id = profile_id
+        self.profile_id = profile_id
         self.player_cog = player_cog
 
         self._character_thread = None
@@ -96,7 +96,7 @@ class PlayerCharacter(commands.Cog):
 
     async def get_character_thread(self) -> discord.Thread:
         if not self._character_thread:
-            self._character_thread = await self.bot.fetch_channel(self._profile_id)
+            self._character_thread = await self.bot.fetch_channel(self.profile_id)
 
         return self._character_thread
 
@@ -104,7 +104,7 @@ class PlayerCharacter(commands.Cog):
     async def handle_quest_message(self, message):
 
         # Only process messages from this character's character profile
-        if not self._profile_id or not message.channel.id == self._profile_id:
+        if not self.profile_id or not message.channel.id == self.profile_id:
             return
 
         quests = await self._get_quests_from_msg(message)
@@ -124,7 +124,7 @@ class PlayerCharacter(commands.Cog):
         :rtype:
         """
 
-        @commands.command(name=f"{self._profile_id}-level")
+        @commands.command(name=f"{self.profile_id}-level")
         async def dynamic_command(ctx):
             admin = self.bot.get_user(int(os.environ.get("ADMIN_ID")))
             this_thread = await self.get_character_thread()

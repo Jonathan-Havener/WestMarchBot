@@ -15,7 +15,7 @@ class Player(commands.Cog):
 
         self.__cog_name__ = f"Player-{player_id}"
 
-        self._player_cogs = []
+        self._player_cogs = set()
 
     @property
     def _player_profile_forum(self):
@@ -47,8 +47,7 @@ class Player(commands.Cog):
         if not self._player_cogs:
             for character_thread in await self._get_player_char_threads():
                 character_cog, was_created = await self.character_factory.get_cog(character_thread.id)
-                if was_created:
-                    self._player_cogs.append(character_cog)
+                self._player_cogs.add(character_cog)
 
         return self._player_cogs
 
@@ -69,10 +68,8 @@ class Player(commands.Cog):
         if thread.parent.id != self.character_factory.player_profiles_id:
             return
 
-        char_cog, was_created = await self.character_factory.get_cog(thread.parent.id)
-
-        if was_created:
-            self._player_cogs.append(char_cog)
+        char_cog, was_created = await self.character_factory.get_cog(thread.id)
+        self._player_cogs.add(char_cog)
 
     def ask_level(self):
         """
