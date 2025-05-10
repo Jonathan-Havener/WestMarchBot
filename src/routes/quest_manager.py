@@ -1,6 +1,8 @@
+import os
+import re
+
 from discord.ext import commands
 import discord
-import re
 
 from .player_factory import PlayerFactory
 
@@ -33,7 +35,7 @@ class QuestManager(commands.Cog):
         character = await self.bot.fetch_channel(character_thread_id)
         if not hasattr(character, "parent"):
             return
-        if character.parent.id != 1293034430968889477:
+        if character.parent.id != int(os.environ.get("PLAYER_PROFILES_ID")):
             return
         if character in self._adventurers:
             return
@@ -45,7 +47,7 @@ class QuestManager(commands.Cog):
         self._adventurers.append(char_cog)
 
     def _get_character_threads_from_message(self, message) -> list[int]:
-        pattern = (r"https://discord(?:app)?.com/channels/918112437331427358/(?P<character_thread_url>\d+)|"
+        pattern = (fr"https://discord(?:app)?.com/channels/{os.environ.get('SERVER_ID')}/(?P<character_thread_url>\d+)|"
                    r"<#(?P<character_thread_id>\d+)>")
 
         matches = re.findall(pattern, message.content)
@@ -56,7 +58,7 @@ class QuestManager(commands.Cog):
         if self._bot_message:
             return self._bot_message
         messages = [message async for message in self._quest_thread.history(limit=None)]
-        self._bot_message = await self.get_last_bot_message(messages)
+        self._bot_message = await self.get_adventurer_list_message(messages)
         return self._bot_message
 
     @commands.Cog.listener(name="on_reaction_add")
@@ -152,7 +154,7 @@ class QuestManager(commands.Cog):
             return
 
         quest_thread = await self.get_quest_thread()
-        if message.author == quest_thread.owner and message.author.id != 309102962234359829:
+        if message.author == quest_thread.owner and message.author.id != int(os.environ.get("ADMIN_ID")):
             return
 
         mentioned_characters = self._get_character_threads_from_message(message)
@@ -213,7 +215,7 @@ class QuestManager(commands.Cog):
         """
         self._message_responses.append(self._handle_signup_message)
 
-    async def get_last_bot_message(self, messages) -> [discord.Message, None]:
+    async def get_adventurer_list_message(self, messages) -> [discord.Message, None]:
         bot_message = next((message
                             for message in messages
                             if message.author.bot and message.embeds),

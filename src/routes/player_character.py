@@ -1,4 +1,5 @@
 import re
+import os
 
 from discord.ext import commands
 import discord
@@ -31,7 +32,7 @@ class PlayerCharacter(commands.Cog):
         """
         quests = []
 
-        pattern = (r"https://discord(?:app)?.com/channels/918112437331427358/(?P<quest_thread_url>\d+)|"
+        pattern = (fr"https://discord(?:app)?.com/channels/{os.environ.get('SERVER_ID')}/(?P<quest_thread_url>\d+)|"
                    r"<#(?P<quest_thread_id>\d+)>")
 
         matches = re.findall(pattern, message.content)
@@ -49,7 +50,7 @@ class PlayerCharacter(commands.Cog):
 
             if not hasattr(quest, "parent"):
                 continue
-            if quest.parent.id not in [1290373594781716554, 1359554902451425280]:
+            if quest.parent.id not in [int(os.environ.get("QUEST_BOARD_ID")), int(os.environ.get("REQUEST_BOARD_ID"))]:
                 continue
 
             quests.append(quest)
@@ -125,8 +126,7 @@ class PlayerCharacter(commands.Cog):
 
         @commands.command(name=f"{self._profile_id}-level")
         async def dynamic_command(ctx):
-            admin_user_id = 309102962234359829
-            admin = self.bot.get_user(admin_user_id)
+            admin = self.bot.get_user(int(os.environ.get("ADMIN_ID")))
             this_thread = await self.get_character_thread()
 
             await admin.send(f"{this_thread.jump_url} by {this_thread.owner.display_name} is level {self.level}")

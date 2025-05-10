@@ -1,4 +1,5 @@
 import logging
+import os
 
 from discord.ext import commands
 import discord
@@ -179,8 +180,7 @@ class Shop(commands.Cog):
         logging.info("Shop initialized")
         self.bot = bot
 
-        self.shops_forum_id = 1370267223058419753
-        self.shop_forum = self.bot.get_channel(self.shops_forum_id)
+        self.shop_forum = self.bot.get_channel(int(os.environ.get("SHOPS_ID")))
 
         magic_manager = MagicManager(source=Path(__file__).parent.parent.parent.parent / "data" / "dmg-magic-item-definitions.json")
         # self._shop = ShopLogic(magic_manager_obj=magic_manager)

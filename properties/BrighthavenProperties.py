@@ -1,8 +1,13 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
-GUILD_ID = 918112437331427358
-QUEST_CHANNEL_ID = 1290373594781716554  # Replace with your category ID
-bot_updates_channel_id = 1297996965438554142
+if not os.getenv("ENV"):
+    load_dotenv(dotenv_path=".env.test")
+
+GUILD_ID = int(os.environ.get("SERVER_ID"))
+QUEST_CHANNEL_ID = int(os.environ.get("QUEST_BOARD_ID"))  # Replace with your category ID
+bot_updates_channel_id = int(os.environ.get("BOT_UPDATES_ID"))
 ROLE_NAME = 'Adventurers of Brighthaven'
 EXPIRY_FILE = 'bright_haven_role_expiry.json'
 expiry_path = Path(__file__).parent.parent / "logs" / EXPIRY_FILE

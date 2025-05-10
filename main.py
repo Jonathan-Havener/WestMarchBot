@@ -1,12 +1,19 @@
 import os
+from datetime import datetime
 
+
+import discord
 from discord.ext import commands
+from dotenv import load_dotenv
 
 from properties.config import PREFIX
 # add the cogs context for calls to __subclasses__
 from routes import *
 from routines.player_signup import PlayerSignup
 from role_logger import *
+
+if not os.getenv("ENV"):
+    load_dotenv(dotenv_path=".env.test")
 
 TOKEN = os.environ.get("API_TOKEN")
 intents = discord.Intents.all()
@@ -22,8 +29,7 @@ quest_fact = QuestFactory(bot, player_fact)
 
 @bot.event
 async def on_ready():
-    admin_user_id = 309102962234359829
-    admin = bot.get_user(admin_user_id)
+    admin = bot.get_user(int(os.environ.get("ADMIN_ID")))
     await admin.send(f"Bot reset at {datetime.now()}")
 
     await bot.add_cog(player_fact)
@@ -34,8 +40,8 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if "!level" in message.content:
-        sidequest_server = bot.get_guild(918112437331427358)
-        adventurer_role = sidequest_server.get_role(1297995766350090311)
+        sidequest_server = bot.get_guild(int(os.environ.get("SERVER_ID")))
+        adventurer_role = sidequest_server.get_role(int(os.environ.get("ADVENTURER_ROLE_ID")))
         adventurers = adventurer_role.members
 
         for adventurer in adventurers:

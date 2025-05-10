@@ -1,3 +1,4 @@
+import os
 import yaml
 from pathlib import Path
 import asyncio
@@ -15,16 +16,14 @@ class PlayerSignup(Routine):
 
     @property
     def quest_board(self):
-        bot_updates_channel_id = 1290373594781716554
-        return self.bot.get_channel(bot_updates_channel_id)
+        return self.bot.get_channel(int(os.environ.get("QUEST_BOARD_ID")))
 
     @property
     def request_board(self):
-        request_channel_id = 1359554902451425280
-        return self.bot.get_channel(request_channel_id)
+        return self.bot.get_channel(int(os.environ.get("REQUEST_BOARD_ID")))
 
     async def _get_character(self, message: discord.Message, character_info) -> None:
-        link_pattern = r"(?P<jump_url>https://discord(?:app)?.com/channels/918112437331427358/(?P<character_thread>\d+))"
+        link_pattern = fr"(?P<jump_url>https://discord(?:app)?.com/channels/{os.environ.get('SERVER_ID')}/(?P<character_thread>\d+))"
         id_pattern = r"<#(?P<character_thread>\d+)>"
 
         match = re.search(link_pattern, message.content) or re.search(id_pattern, message.content)

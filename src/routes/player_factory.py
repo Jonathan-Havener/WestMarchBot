@@ -1,5 +1,8 @@
+import os
+
 import discord
 from discord.ext import commands
+
 from .player import Player
 
 
@@ -7,7 +10,7 @@ class PlayerFactory(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-        self.brighthaven_category_id = 1280756202111893595
+        self.brighthaven_category_id = int(os.environ.get("BRIGHTHAVEN_CATEGORY_ID"))
 
     async def get_cog(self, player_id: str):
         player_cog = self.bot.get_cog(f"Player-{player_id}")

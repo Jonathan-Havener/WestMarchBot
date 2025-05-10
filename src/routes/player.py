@@ -1,6 +1,8 @@
-import discord
+import os
 
+import discord
 from discord.ext import commands
+
 from .player_character import PlayerCharacter
 from .character_factory import CharacterFactory
 
@@ -17,7 +19,7 @@ class Player(commands.Cog):
 
     @property
     def _player_profile_forum(self):
-        player_profiles_id = 1293034430968889477
+        player_profiles_id = int(os.environ.get("PLAYER_PROFILES_ID"))
         player_profiles = self.bot.get_channel(player_profiles_id)
         return player_profiles
 
@@ -80,8 +82,7 @@ class Player(commands.Cog):
         """
         @commands.command(name=f"{self.player_id}-level")
         async def dynamic_command(ctx):
-            admin_user_id = 309102962234359829
-            admin = self.bot.get_user(admin_user_id)
+            admin = self.bot.get_user(int(os.environ.get("ADMIN_ID")))
 
             num_quests = sum([len(await cog.quests()) for cog in await self.character_cogs()])
             player = self.bot.get_user(self.player_id)

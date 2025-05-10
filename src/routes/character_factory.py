@@ -1,3 +1,5 @@
+import os
+
 import discord
 from discord.ext import commands
 from .player_character import PlayerCharacter
@@ -8,7 +10,7 @@ class CharacterFactory(commands.Cog):
         self.bot = bot
         self.player_cog = player_cog
 
-        self.player_profiles_id = 1293034430968889477
+        self.player_profiles_id = int(os.environ.get("PLAYER_PROFILES_ID"))
 
     async def get_cog(self, profile_id: str):
         character_cog = self.bot.get_cog(f"PlayerCharacter-{profile_id}")
