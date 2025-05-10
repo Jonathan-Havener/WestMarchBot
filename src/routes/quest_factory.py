@@ -1,5 +1,8 @@
+import os
+
 import discord
 from discord.ext import commands
+
 from .quest_manager import QuestManager
 from .player_factory import PlayerFactory
 
@@ -9,9 +12,10 @@ class QuestFactory(commands.Cog):
         self.bot = bot
         self.player_factory = player_factory
 
-        quest_board_id = 1290373594781716554
-        request_board_id = 1359554902451425280
-        self._quest_forums = [quest_board_id, request_board_id]
+        self._quest_forums = [
+            int(os.environ.get("QUEST_BOARD_ID")),
+            int(os.environ.get("REQUEST_BOARD_ID"))
+        ]
 
     async def get_cog(self, quest_id: str):
         quest_cog = self.bot.get_cog(f"Quest-{quest_id}")

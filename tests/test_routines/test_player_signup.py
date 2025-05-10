@@ -1,5 +1,6 @@
 import unittest
 import time
+import os
 
 import discord
 from discord.ext import commands
@@ -74,8 +75,7 @@ class PlayerSignupCase(unittest.IsolatedAsyncioTestCase):
 
             embed = self.signup.build_embed(thread, these_player_quests, player_characters)
 
-            admin_user_id = 309102962234359829
-            admin = self.bot.get_user(admin_user_id)
+            admin = self.bot.get_user(int(os.environ.get("ADMIN_ID")))
 
             await admin.send(embed=embed)
 

@@ -1,6 +1,7 @@
 from pathlib import Path
+import os
 
-GUILD_ID = 918112437331427358
+GUILD_ID = int(os.environ.get("SERVER_ID"))
 QUEST_CHANNEL_ID = 1064019917579497592  # Replace with your category ID
 bot_updates_channel_id = 1292599936474681384
 ROLE_NAME = 'Adventurers of New Devlin'
