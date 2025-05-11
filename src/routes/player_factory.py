@@ -32,13 +32,16 @@ class PlayerFactory(commands.Cog):
         :return:
         :rtype:
         """
-        if not isinstance(message.channel, discord.abc.GuildChannel) or message.channel.category_id != self.brighthaven_category_id:
+        if not hasattr(message.channel, "category_id") or message.channel.category_id != self.brighthaven_category_id:
             return
 
         player_cog, is_new = await self.get_cog(message.author.id)
 
         if not is_new:
             return
+
+        # Load player characters
+        await player_cog.character_cogs()
 
         # Pass the message along to the created quest manager
         for listener in player_cog.get_listeners():

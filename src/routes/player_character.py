@@ -8,12 +8,12 @@ import discord
 class PlayerCharacter(commands.Cog):
     def __init__(self, bot, profile_id: int, player_cog):
         self.bot = bot
-        self._profile_id = profile_id
+        self.profile_id = profile_id
         self.player_cog = player_cog
 
         self._character_thread = None
 
-        self._quests = []
+        self._quests = set()
         self._message_responses = []
 
         self._last_message = None
@@ -21,6 +21,24 @@ class PlayerCharacter(commands.Cog):
         self.__cog_name__ = f"PlayerCharacter-{profile_id}"
 
         self.bot.add_command(self.ask_level())
+
+    @classmethod
+    async def create(cls, bot, profile_id: int, player_cog):
+        self = cls(bot, profile_id, player_cog)
+        await self._populate_quest_history()
+
+        current_level = await self.level()
+        this_thread = await self.get_character_thread()
+
+        was_updated = [
+            msg
+            async for msg in this_thread.history(limit=None)
+            if f"hit level {current_level}" in msg.content
+        ]
+        if not was_updated:
+            await this_thread.send(f"{this_thread.name} hit level {current_level}! Congrats :)")
+
+        return self
 
     async def _get_quests_from_msg(self, message) -> list[discord.Thread]:
         """
@@ -75,7 +93,7 @@ class PlayerCharacter(commands.Cog):
             for quest in quests:
                 if quest in self._quests:
                     continue
-                self._quests.append(quest)
+                self._quests.add(quest)
 
     async def _add_quest(self, quest: discord.Thread) -> None:
         this_thread = await self.get_character_thread()
@@ -85,18 +103,18 @@ class PlayerCharacter(commands.Cog):
             await self._populate_quest_history()
 
         level_before = await self.level()
-        self._quests.append(quest)
+        self._quests.add(quest)
         level_after = await self.level()
 
         if level_after != level_before:
-            await this_thread.send(f"{this_thread.name} hit level {self.level}! Congrats :)")
+            await this_thread.send(f"{this_thread.name} hit level {await self.level()}! Congrats :)")
 
     async def level(self) -> int:
         return 3 + int(len(await self.quests()) / 4)
 
     async def get_character_thread(self) -> discord.Thread:
         if not self._character_thread:
-            self._character_thread = await self.bot.fetch_channel(self._profile_id)
+            self._character_thread = await self.bot.fetch_channel(self.profile_id)
 
         return self._character_thread
 
@@ -104,7 +122,7 @@ class PlayerCharacter(commands.Cog):
     async def handle_quest_message(self, message):
 
         # Only process messages from this character's character profile
-        if not self._profile_id or not message.channel.id == self._profile_id:
+        if not self.profile_id or not message.channel.id == self.profile_id:
             return
 
         quests = await self._get_quests_from_msg(message)
@@ -124,11 +142,11 @@ class PlayerCharacter(commands.Cog):
         :rtype:
         """
 
-        @commands.command(name=f"{self._profile_id}-level")
+        @commands.command(name=f"{self.profile_id}-level")
         async def dynamic_command(ctx):
             admin = self.bot.get_user(int(os.environ.get("ADMIN_ID")))
             this_thread = await self.get_character_thread()
 
-            await admin.send(f"{this_thread.jump_url} by {this_thread.owner.display_name} is level {self.level}")
+            await admin.send(f"{this_thread.jump_url} by {this_thread.owner.display_name} is level {await self.level()}")
 
         return dynamic_command
