@@ -11,7 +11,7 @@ class Player(commands.Cog):
     def __init__(self, bot: commands.Bot, player_id):
         self.bot = bot
         self.player_id = player_id
-        self.character_factory = CharacterFactory(self.bot, self)
+        self._character_factory = CharacterFactory(self.bot, self)
 
         self.__cog_name__ = f"Player-{player_id}"
 
@@ -38,6 +38,11 @@ class Player(commands.Cog):
             if thread.owner and thread.owner.id == self.player_id
         ]
 
+    async def get_character(self, profile_id):
+        character, _ = await self._character_factory.get_cog(profile_id)
+        self._player_cogs.add(character)
+        return character
+
     async def character_cogs(self) -> list[PlayerCharacter]:
         """
         lazy loads the player's characters
@@ -46,7 +51,7 @@ class Player(commands.Cog):
         """
         if not self._player_cogs:
             for character_thread in await self._get_player_char_threads():
-                character_cog, was_created = await self.character_factory.get_cog(character_thread.id)
+                character_cog, was_created = await self._character_factory.get_cog(character_thread.id)
                 self._player_cogs.add(character_cog)
 
         return self._player_cogs
@@ -65,10 +70,10 @@ class Player(commands.Cog):
             return
 
         # If the thread isn't a character thread
-        if thread.parent.id != self.character_factory.player_profiles_id:
+        if thread.parent.id != self._character_factory.player_profiles_id:
             return
 
-        char_cog, was_created = await self.character_factory.get_cog(thread.id)
+        char_cog, was_created = await self._character_factory.get_cog(thread.id)
         self._player_cogs.add(char_cog)
 
     def ask_level(self):

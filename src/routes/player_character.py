@@ -13,7 +13,7 @@ class PlayerCharacter(commands.Cog):
 
         self._character_thread = None
 
-        self._quests = []
+        self._quests = set()
         self._message_responses = []
 
         self._last_message = None
@@ -21,6 +21,24 @@ class PlayerCharacter(commands.Cog):
         self.__cog_name__ = f"PlayerCharacter-{profile_id}"
 
         self.bot.add_command(self.ask_level())
+
+    @classmethod
+    async def create(cls, bot, profile_id: int, player_cog):
+        self = cls(bot, profile_id, player_cog)
+        await self._populate_quest_history()
+
+        current_level = await self.level()
+        this_thread = await self.get_character_thread()
+
+        was_updated = [
+            msg
+            async for msg in this_thread.history(limit=None)
+            if f"hit level {current_level}" in msg.content
+        ]
+        if not was_updated:
+            await this_thread.send(f"{this_thread.name} hit level {current_level}! Congrats :)")
+
+        return self
 
     async def _get_quests_from_msg(self, message) -> list[discord.Thread]:
         """
@@ -75,7 +93,7 @@ class PlayerCharacter(commands.Cog):
             for quest in quests:
                 if quest in self._quests:
                     continue
-                self._quests.append(quest)
+                self._quests.add(quest)
 
     async def _add_quest(self, quest: discord.Thread) -> None:
         this_thread = await self.get_character_thread()
@@ -85,7 +103,7 @@ class PlayerCharacter(commands.Cog):
             await self._populate_quest_history()
 
         level_before = await self.level()
-        self._quests.append(quest)
+        self._quests.add(quest)
         level_after = await self.level()
 
         if level_after != level_before:

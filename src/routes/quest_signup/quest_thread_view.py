@@ -51,4 +51,9 @@ class AwardXPButton(ui.Button):
             await interaction.response.send_message("Only the quest creator can award experience.", ephemeral=True)
             return
 
-        await interaction.response.send_message("✅ Experience awarded! (This is a placeholder)", ephemeral=True)
+        for character in self.quest_manager.approved_users:
+            character_thread = await character.get_character_thread()
+            quest_thread = await self.quest_manager.get_quest_thread()
+            await character_thread.send(f"{quest_thread.jump_url} completed!")
+
+        await interaction.response.send_message("✅ Experience awarded!", ephemeral=True)

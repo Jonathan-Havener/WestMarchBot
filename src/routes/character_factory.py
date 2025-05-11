@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 import discord
 from discord.ext import commands
@@ -11,14 +12,22 @@ class CharacterFactory(commands.Cog):
         self.player_cog = player_cog
 
         self.player_profiles_id = int(os.environ.get("PLAYER_PROFILES_ID"))
+        self._locks = {}
 
-    async def get_cog(self, profile_id: str):
-        character_cog = self.bot.get_cog(f"PlayerCharacter-{profile_id}")
-        created = False
+    def _get_lock(self, quest_id: str) -> asyncio.Lock:
+        return self._locks.setdefault(quest_id, asyncio.Lock())
 
-        if not character_cog:
-            character_cog = PlayerCharacter(self.bot, profile_id, self.player_cog)
-            await self.bot.add_cog(character_cog)
-            created = True
+    async def get_cog(self, profile_id: int):
+        profile_id = int(profile_id)
+        lock = self._get_lock(profile_id)
+        async with lock:
 
-        return character_cog, created
+            character_cog = self.bot.get_cog(f"PlayerCharacter-{profile_id}")
+            created = False
+
+            if not character_cog:
+                character_cog = await PlayerCharacter.create(self.bot, int(profile_id), self.player_cog)
+                await self.bot.add_cog(character_cog)
+                created = True
+
+            return character_cog, created

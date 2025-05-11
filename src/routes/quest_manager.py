@@ -38,12 +38,12 @@ class QuestManager(commands.Cog):
         if bot_message:
             embed = bot_message.embeds[0]
 
-            approved_text = next(field.value for field in embed.fields if "Approved" in field.name)
+            approved_text = next((field.value for field in embed.fields if "Approved" in field.name), "")
             mentioned_characters = self._get_character_threads_from_message(approved_text)
             for thread_id in mentioned_characters:
                 await self._add_adventurer(self.approved_users, thread_id)
 
-            waitlisted_text = next(field.value for field in embed.fields if "Waitlisted" in field.name)
+            waitlisted_text = next((field.value for field in embed.fields if "Waitlisted" in field.name), "")
             mentioned_characters = self._get_character_threads_from_message(waitlisted_text)
             for thread_id in mentioned_characters:
                 await self._add_adventurer(self.waitlisted_users, thread_id)
@@ -78,7 +78,7 @@ class QuestManager(commands.Cog):
 
         player_cog, player_was_created = await self.player_factory.get_cog(character.owner.id)
         # Creates the character if it didn't already exist
-        char_cog, char_was_created = await player_cog.character_factory.get_cog(character_thread_id)
+        char_cog = await player_cog.get_character(character_thread_id)
 
         approval_set.add(char_cog)
 
