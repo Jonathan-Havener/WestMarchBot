@@ -35,7 +35,7 @@ class CharacterSelectButton(discord.ui.Button):
         character_tag_text = f"{'/'.join(character_tags)}"
 
         character_text = f"as {url}. Level - {await self.character.level()} {character_tag_text}"
-        details += f"{character_thread.owner.display_name} {character_text} joined the frey!\n"
+        details += f"{character_thread.owner.mention} {character_text} joined the frey!\n"
 
         await interaction.channel.send(details, view=view)
 
@@ -77,7 +77,7 @@ class JoinRequestView(discord.ui.View):
                 ]
                 character_tag_text = f"{'/'.join(character_tags)}"
                 character_text = f"as {url}. Level - {await adventurer.level()} {character_tag_text}"
-                details += f"- {character_thread.owner.display_name} {character_text}\n"
+                details += f"- {character_thread.owner.mention} {character_text}\n"
             return details
 
         def update_or_add_field(name, value):
