@@ -33,11 +33,27 @@ class QuestManager(commands.Cog):
         self = cls(bot, quest_id, player_factory)
 
         quest_thread = await self.get_quest_thread()
-        embed = await self.build_embed(quest_thread)
+
         bot_message = await self.bot_message()
         if bot_message:
-            await bot_message.edit(embed=embed)
+            embed = bot_message.embeds[0]
+
+            approved_text = next(field.value for field in embed.fields if "Approved" in field.name)
+            mentioned_characters = self._get_character_threads_from_message(approved_text)
+            for thread_id in mentioned_characters:
+                await self._add_adventurer(self.approved_users, thread_id)
+
+            waitlisted_text = next(field.value for field in embed.fields if "Waitlisted" in field.name)
+            mentioned_characters = self._get_character_threads_from_message(waitlisted_text)
+            for thread_id in mentioned_characters:
+                await self._add_adventurer(self.waitlisted_users, thread_id)
+
+            # Recreate the view with existing data
+            view = QuestThreadView(self, quest_thread.owner, bot_message, embed)
+            await bot_message.edit(embed=embed, view=view)
+            self._bot_message = bot_message
         else:
+            embed = await self.build_embed(quest_thread)
             message = await quest_thread.send(embed=embed)
             view = QuestThreadView(self, quest_thread.owner, message, embed)
             self._bot_message = await message.edit(embed=embed, view=view)
@@ -51,7 +67,7 @@ class QuestManager(commands.Cog):
         self._quest_thread = await self.bot.fetch_channel(self._quest_id)
         return self._quest_thread
 
-    async def _add_adventurer(self, character_thread_id: int):
+    async def _add_adventurer(self, approval_set, character_thread_id: int):
         character = await self.bot.fetch_channel(character_thread_id)
         if not hasattr(character, "parent"):
             return
@@ -64,13 +80,13 @@ class QuestManager(commands.Cog):
         # Creates the character if it didn't already exist
         char_cog, char_was_created = await player_cog.character_factory.get_cog(character_thread_id)
 
-        self._adventurers.add(char_cog)
+        approval_set.add(char_cog)
 
-    def _get_character_threads_from_message(self, message) -> list[int]:
+    def _get_character_threads_from_message(self, text) -> list[int]:
         pattern = (fr"https://discord(?:app)?.com/channels/{os.environ.get('SERVER_ID')}/(?P<character_thread_url>\d+)|"
                    r"<#(?P<character_thread_id>\d+)>")
 
-        matches = re.findall(pattern, message.content)
+        matches = re.findall(pattern, text)
         matches = [item for match in matches for item in match if item]
         return matches
 
