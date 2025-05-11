@@ -89,7 +89,7 @@ class PlayerCharacter(commands.Cog):
         level_after = await self.level()
 
         if level_after != level_before:
-            await this_thread.send(f"{this_thread.name} hit level {self.level}! Congrats :)")
+            await this_thread.send(f"{this_thread.name} hit level {await self.level()}! Congrats :)")
 
     async def level(self) -> int:
         return 3 + int(len(await self.quests()) / 4)
@@ -129,6 +129,6 @@ class PlayerCharacter(commands.Cog):
             admin = self.bot.get_user(int(os.environ.get("ADMIN_ID")))
             this_thread = await self.get_character_thread()
 
-            await admin.send(f"{this_thread.jump_url} by {this_thread.owner.display_name} is level {self.level}")
+            await admin.send(f"{this_thread.jump_url} by {this_thread.owner.display_name} is level {await self.level()}")
 
         return dynamic_command

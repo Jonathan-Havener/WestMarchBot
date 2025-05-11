@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 import discord
 from discord.ext import commands
@@ -16,17 +17,23 @@ class QuestFactory(commands.Cog):
             int(os.environ.get("QUEST_BOARD_ID")),
             int(os.environ.get("REQUEST_BOARD_ID"))
         ]
+        self._locks = {}
+
+    def _get_lock(self, quest_id: str) -> asyncio.Lock:
+        return self._locks.setdefault(quest_id, asyncio.Lock())
 
     async def get_cog(self, quest_id: str):
-        quest_cog = self.bot.get_cog(f"Quest-{quest_id}")
-        created = False
+        lock = self._get_lock(quest_id)
+        async with lock:
+            quest_cog = self.bot.get_cog(f"Quest-{quest_id}")
+            created = False
 
-        if not quest_cog:
-            quest_cog = QuestManager(self.bot, quest_id, self.player_factory)
-            await self.bot.add_cog(quest_cog)
-            created = True
+            if not quest_cog:
+                quest_cog = await QuestManager.create(self.bot, quest_id, self.player_factory)
+                await self.bot.add_cog(quest_cog)
+                created = True
 
-        return quest_cog, created
+            return quest_cog, created
 
     @commands.Cog.listener(name="on_thread_create")
     async def _quest_created(self, thread: discord.Thread):

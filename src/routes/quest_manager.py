@@ -5,7 +5,7 @@ from discord.ext import commands
 import discord
 
 from .player_factory import PlayerFactory
-from .quest_signup.quest_signup_view import CharacterSelectionView
+from .quest_signup.quest_thread_view import QuestThreadView
 
 
 class QuestManager(commands.Cog):
@@ -14,6 +14,9 @@ class QuestManager(commands.Cog):
         self._quest_id = quest_id
         self._quest_thread = None
         self.player_factory = player_factory
+
+        self.approved_users = set()
+        self.waitlisted_users = set()
 
         self._adventurers = set()
         self._message_responses = []
@@ -24,6 +27,22 @@ class QuestManager(commands.Cog):
         self.__cog_name__ = f"Quest-{quest_id}"
 
         self._queried_players = set([])
+
+    @classmethod
+    async def create(cls, bot: commands.Bot, quest_id, player_factory: PlayerFactory):
+        self = cls(bot, quest_id, player_factory)
+
+        quest_thread = await self.get_quest_thread()
+        embed = await self.build_embed(quest_thread)
+        bot_message = await self.bot_message()
+        if bot_message:
+            await bot_message.edit(embed=embed)
+        else:
+            message = await quest_thread.send(embed=embed)
+            view = QuestThreadView(self, quest_thread.owner, message, embed)
+            self._bot_message = await message.edit(embed=embed, view=view)
+
+        return self
 
     async def get_quest_thread(self):
         if self._quest_thread:
@@ -69,7 +88,8 @@ class QuestManager(commands.Cog):
         :return:
         :rtype:
         """
-        self._message_responses.append(self._handle_signup_message)
+        pass
+        # self._message_responses.append(self._handle_signup_message)
 
     async def get_adventurer_list_message(self, messages) -> [discord.Message, None]:
         bot_message = next((message
@@ -172,110 +192,31 @@ class QuestManager(commands.Cog):
 
         await player_req_msg.add_reaction("❌")
 
-    @commands.Cog.listener(name="on_message")
-    async def signup(self, msg):
-        if not self._quest_id or msg.channel.id != self._quest_id:
-            return
-
-        if "!signup" not in msg.content:
-            return
-
-        quest_thread = await self.get_quest_thread()
-
-        player_cog, _ = await self.player_factory.get_cog(msg.author.id)
-        player_characters = await player_cog.character_cogs()
-
-        async def on_character_selected(thread_id):
-            await self._add_adventurer(thread_id)
-            embed = await self.build_embed(quest_thread)
-            bot_message = await self.bot_message()
-            if bot_message:
-                await bot_message.edit(embed=embed)
-            else:
-                await quest_thread.send(embed=embed)
-
-        embed = discord.Embed(
-            title="Who would you like to play?",
-            description="Choose one of your characters below:",
-            color=discord.Color.green()
-        )
-
-        view = await CharacterSelectionView.create(player_characters, msg.author, on_character_selected)
-        await msg.channel.send(content=msg.author.mention, embed=embed, view=view)
-        await msg.delete()
-
-        self._queried_players.add(msg.author.id)
-
-    @commands.Cog.listener(name="on_message")
-    async def _handle_nosignup_message(self, message):
-        if not self._quest_id or message.channel.id != self._quest_id:
-            return
-
-        if message.author.id in self._queried_players:
-            return
-
-        quest_thread = await self.get_quest_thread()
-        if message.author == quest_thread.owner:
-            return
-
-        mentioned_characters = self._get_character_threads_from_message(message)
-        if mentioned_characters:
-            return
-
-        if message.author.id in [char.player_cog.player_id for char in self._adventurers]:
-            return
-
-        player_cog, _ = await self.player_factory.get_cog(message.author.id)
-        player_characters = await player_cog.character_cogs()
-
-        if not player_characters:
-            return
-
-        async def on_character_selected(thread_id):
-            await self._add_adventurer(thread_id)
-            embed = await self.build_embed(quest_thread)
-            bot_message = await self.bot_message()
-            if bot_message:
-                await bot_message.edit(embed=embed)
-            else:
-                await quest_thread.send(embed=embed)
-
-        embed = discord.Embed(
-            title="Who would you like to play?",
-            description="Choose one of your characters below:",
-            color=discord.Color.green()
-        )
-
-        view = await CharacterSelectionView.create(player_characters, message.author, on_character_selected)
-        await message.channel.send(content=message.author.mention, embed=embed, view=view)
-
-        self._queried_players.add(message.author.id)
-
-    @commands.Cog.listener(name="on_message")
-    async def _handle_signup_message(self, message):
-
-        # Only process messages from this quest thread
-        if not self._quest_id or not message.channel.id == self._quest_id:
-            return
-
-        if message.author.bot:
-            return
-
-        mentioned_characters = self._get_character_threads_from_message(message)
-
-        for thread_id in mentioned_characters:
-            await self._add_adventurer(thread_id)
-
-        if mentioned_characters:
-            quest_thread = await self.get_quest_thread()
-            # Update the embed
-            embed = await self.build_embed(quest_thread)
-            bot_message = await self.bot_message()
-            if bot_message:
-                await bot_message.edit(embed=embed)
-            else:
-                await quest_thread.send(embed=embed)
-
-    @commands.Cog.listener(name="on_message_edit")
-    async def _handle_signup_message_update(self, message_before, message_after):
-        await self._handle_signup_message(message_after)
+    # @commands.Cog.listener(name="on_message")
+    # async def _handle_signup_message(self, message):
+    #
+    #     # Only process messages from this quest thread
+    #     if not self._quest_id or not message.channel.id == self._quest_id:
+    #         return
+    #
+    #     if message.author.bot:
+    #         return
+    #
+    #     mentioned_characters = self._get_character_threads_from_message(message)
+    #
+    #     for thread_id in mentioned_characters:
+    #         await self._add_adventurer(thread_id)
+    #
+    #     if mentioned_characters:
+    #         quest_thread = await self.get_quest_thread()
+    #         # Update the embed
+    #         embed = await self.build_embed(quest_thread)
+    #         bot_message = await self.bot_message()
+    #         if bot_message:
+    #             await bot_message.edit(embed=embed)
+    #         else:
+    #             await quest_thread.send(embed=embed)
+    #
+    # @commands.Cog.listener(name="on_message_edit")
+    # async def _handle_signup_message_update(self, message_before, message_after):
+    #     await self._handle_signup_message(message_after)
