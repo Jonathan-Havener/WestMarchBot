@@ -1,6 +1,7 @@
 import os
+import asyncio
 from datetime import datetime
-
+import logging
 
 import discord
 from discord.ext import commands
@@ -35,6 +36,23 @@ async def on_ready():
     await bot.add_cog(player_fact)
     await bot.add_cog(quest_fact)
     await bot.add_cog(Shop(bot))
+
+    # Launch the background task
+    asyncio.create_task(init_quest_threads(bot, quest_fact))
+
+
+async def init_quest_threads(bot, quest_factory):
+    await bot.wait_until_ready()  # Just to be safe
+
+    for channel_id in (int(os.environ.get("QUEST_BOARD_ID")), int(os.environ.get("REQUEST_BOARD_ID"))):
+        forum_channel = bot.get_channel(channel_id)
+        if not forum_channel:
+            print(f"Could not find channel with ID {channel_id}")
+            continue
+
+        for thread in forum_channel.threads[::-1]:
+            await quest_factory.get_cog(thread.id)
+            await asyncio.sleep(2)
 
 
 @bot.event

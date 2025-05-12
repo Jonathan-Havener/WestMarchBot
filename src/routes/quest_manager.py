@@ -1,11 +1,13 @@
 import os
 import re
+import logging
 
 from discord.ext import commands
 import discord
 
 from .player_factory import PlayerFactory
 from .quest_signup.quest_thread_view import QuestThreadView
+from .quest_signup.character_select_button import JoinRequestView
 
 
 class QuestManager(commands.Cog):
@@ -58,7 +60,30 @@ class QuestManager(commands.Cog):
             view = QuestThreadView(self, quest_thread.owner, message, embed)
             self._bot_message = await message.edit(embed=embed, view=view)
 
+        logging.info(f"Created new quest thread for quest ID {quest_id}: {quest_thread.name} (ID: {quest_thread.id})")
+
+        await self.relink_join_request_views()
+
         return self
+
+    async def relink_join_request_views(self):
+        messages = [message async for message in self._quest_thread.history(limit=None)]
+        for message in messages:
+            if "joined the frey!" in message.content:
+                bot_message = await self.bot_message()
+
+                match = re.search(r"<@(\d+)>", message.content)
+                if not match:
+                    return
+                user_id = match.group(1)
+                player_cog, player_was_created = await self.player_factory.get_cog(user_id)
+
+                character_thread_id = self._get_character_threads_from_message(message.content)[0]
+                # Creates the character if it didn't already exist
+                char_cog = await player_cog.get_character(character_thread_id)
+
+                view = JoinRequestView(self, self._quest_thread.owner, char_cog, bot_message, bot_message.embeds[0])
+                message = await message.edit(content = message.content, view=view)
 
     async def get_quest_thread(self):
         if self._quest_thread:
@@ -160,53 +185,53 @@ class QuestManager(commands.Cog):
         for callback in self._message_responses:
             await callback(message)
 
-    async def _send_character_selection_message(self, player: discord.User, player_characters):
-        quest_thread = await self.get_quest_thread()
-        emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
-
-        message_content = ""
-
-        timed_characters = {}
-        for character in player_characters:
-            char_thread = await character.get_character_thread()
-
-            non_player_tags = ["NPC", "Deceased", "pregen"]
-            actual_tags = [tag.name for tag in char_thread.applied_tags]
-            # Ignore this character if it has any of these tags
-            if not actual_tags or not set(non_player_tags).isdisjoint(set(actual_tags)):
-                continue
-
-            last_message = next(iter([msg async for msg in char_thread.history(limit=1)]), None)
-            if not last_message:
-                continue
-            last_message_time = last_message.edited_at or last_message.created_at
-            timed_characters.update({last_message_time: character})
-
-        recent_characters = [timed_characters[k] for k in sorted(timed_characters.keys(), reverse=True)]
-
-        for index, character_cog in enumerate(recent_characters[:len(emojis)]):
-            char_thread = await character_cog.get_character_thread()
-            message_content += (
-                f"{index+1} : "
-                f"[{char_thread.name}]"
-                f"({char_thread.jump_url}) "
-                f"Level {await character_cog.level()} "
-            )
-            character_tags = [
-                tag.name
-                for tag in char_thread.applied_tags
-                if tag.name != 'Player Character'
-            ]
-            message_content += "/".join(character_tags)
-            message_content += "\n"
-
-        message_content = f"{player.mention}, who would you like to play?\n" + message_content
-
-        player_req_msg = await quest_thread.send(f"{quest_thread.name}\n{message_content}")
-        for idx, player_option in enumerate(recent_characters[:len(emojis)]):
-            await player_req_msg.add_reaction(emojis[idx])
-
-        await player_req_msg.add_reaction("❌")
+    # async def _send_character_selection_message(self, player: discord.User, player_characters):
+    #     quest_thread = await self.get_quest_thread()
+    #     emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
+    #
+    #     message_content = ""
+    #
+    #     timed_characters = {}
+    #     for character in player_characters:
+    #         char_thread = await character.get_character_thread()
+    #
+    #         non_player_tags = ["NPC", "Deceased", "pregen"]
+    #         actual_tags = [tag.name for tag in char_thread.applied_tags]
+    #         # Ignore this character if it has any of these tags
+    #         if not actual_tags or not set(non_player_tags).isdisjoint(set(actual_tags)):
+    #             continue
+    #
+    #         last_message = next(iter([msg async for msg in char_thread.history(limit=1)]), None)
+    #         if not last_message:
+    #             continue
+    #         last_message_time = last_message.edited_at or last_message.created_at
+    #         timed_characters.update({last_message_time: character})
+    #
+    #     recent_characters = [timed_characters[k] for k in sorted(timed_characters.keys(), reverse=True)]
+    #
+    #     for index, character_cog in enumerate(recent_characters[:len(emojis)]):
+    #         char_thread = await character_cog.get_character_thread()
+    #         message_content += (
+    #             f"{index+1} : "
+    #             f"[{char_thread.name}]"
+    #             f"({char_thread.jump_url}) "
+    #             f"Level {await character_cog.level()} "
+    #         )
+    #         character_tags = [
+    #             tag.name
+    #             for tag in char_thread.applied_tags
+    #             if tag.name != 'Player Character'
+    #         ]
+    #         message_content += "/".join(character_tags)
+    #         message_content += "\n"
+    #
+    #     message_content = f"{player.mention}, who would you like to play?\n" + message_content
+    #
+    #     player_req_msg = await quest_thread.send(f"{quest_thread.name}\n{message_content}")
+    #     for idx, player_option in enumerate(recent_characters[:len(emojis)]):
+    #         await player_req_msg.add_reaction(emojis[idx])
+    #
+    #     await player_req_msg.add_reaction("❌")
 
     # @commands.Cog.listener(name="on_message")
     # async def _handle_signup_message(self, message):

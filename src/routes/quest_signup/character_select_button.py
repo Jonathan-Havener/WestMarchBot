@@ -1,4 +1,5 @@
 import discord
+import os
 
 
 class CharacterSelectButton(discord.ui.Button):
@@ -111,7 +112,7 @@ class ApproveButton(discord.ui.Button):
         self.quest_manager = quest_manager
 
     async def callback(self, interaction: discord.Interaction):
-        if interaction.user != self.parent_view.thread_owner:
+        if interaction.user != self.parent_view.thread_owner and interaction.user.id != int(os.getenv("ADMIN_ID")):
             await interaction.response.send_message("Only the thread owner can approve players.", ephemeral=True)
             return
 
