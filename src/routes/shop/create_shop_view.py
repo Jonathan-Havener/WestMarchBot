@@ -42,26 +42,36 @@ class CreateShopView(ui.View):
         self.magic_man = magic_manager
 
     def get_embed(self):
-        if self.page == "filterType":
-            selected = ', '.join(self.session.filter_type) or "None"
-            title = "Select Item Types"
-            description = f"Click to toggle types. Currently selected: {selected}"
-        elif self.page == "rarity":
-            selected = ', '.join(self.session.rarity) or "None"
-            title = "Select Rarities"
-            description = f"Click to toggle rarities. Currently selected: {selected}"
-        elif self.page == "nameEntry":
-            title = "Enter Shop Name"
-            description = f"Current name: {self.session.shop_name or 'Not set'}"
-        elif self.page == "nameContains":
-            title = "Item Name Filter"
-            description = f"Current name: {self.session.shop_name or 'Not set'}"
-        else:
-            title = "Unknown Page"
-            description = "Something went wrong."
-
-        embed = discord.Embed(title=title, description=description, color=0x00bfff)
+        embed = discord.Embed(
+            title="Create a Magic Item Shop",
+            color=0x00bfff
+        )
         embed.set_footer(text="Use the navigation buttons to change pages.")
+
+        # Shop Name
+        name_value = self.session.shop_name or "*Not set*"
+        if self.page == "nameEntry":
+            name_value += "  *(editing)*"
+        embed.add_field(name="🛍️ Shop Name", value=name_value, inline=False)
+
+        # Item Name Filter
+        text_value = self.session.item_text or "*No filter*"
+        if self.page == "nameContains":
+            text_value += "  *(editing)*"
+        embed.add_field(name="🔍 Item Name Contains", value=text_value, inline=False)
+
+        # Filter Type
+        type_value = ', '.join(sorted(self.session.filter_type)) or "*None selected*"
+        if self.page == "filterType":
+            type_value += "  *(editing)*"
+        embed.add_field(name="📦 Item Types", value=type_value, inline=False)
+
+        # Rarities
+        rarity_value = ', '.join(sorted(self.session.rarity)) or "*None selected*"
+        if self.page == "rarity":
+            rarity_value += "  *(editing)*"
+        embed.add_field(name="✨ Rarities", value=rarity_value, inline=False)
+
         return embed
 
     async def update_message(self, interaction: discord.Interaction):
