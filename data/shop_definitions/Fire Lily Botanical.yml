@@ -1,0 +1,9 @@
+filter:
+  keyParams:
+    filterType:
+    - Potion
+    rarity:
+    - Uncommon
+    - Common
+  name: Fire Lily Botanical
+  itemText: Resistance

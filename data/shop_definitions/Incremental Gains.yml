@@ -1,0 +1,8 @@
+filter:
+  keyParams:
+    filterType: []
+    rarity:
+    - Uncommon
+    - Common
+  name: Incremental Gains
+  itemText: '+1'
