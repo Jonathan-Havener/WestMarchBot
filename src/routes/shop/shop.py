@@ -84,7 +84,7 @@ class Shop(commands.Cog):
 
             message = await thread.send(embed=embed)
 
-            view = ShopView(shop, message=message, embed=embed)
+            view = ShopView(self.bot, shop, message=message, embed=embed)
             await message.edit(view=view)
 
     @commands.command(
