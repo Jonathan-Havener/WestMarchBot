@@ -1,8 +1,10 @@
 filter:
-  filterType: [
-    Wondrous item
-  ]
-  rarity: [
-    Very Rare,
-    Legendary
-  ]
+  keyParams:
+    filterType: [
+      Wondrous item
+    ]
+    rarity: [
+      Very Rare,
+      Legendary
+    ]
+  name: Gnomish Gnovelties

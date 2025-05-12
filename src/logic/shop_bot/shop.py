@@ -20,7 +20,7 @@ class ShopBuilder:
                 data = yaml.safe_load(file_source)
                 data = data[list(data.keys())[0]]
             new_shop.filter = data
-            new_shop.name = file.stem
+            new_shop.name = data["name"]
 
             new_shop.fill_inventory()
 
@@ -190,7 +190,7 @@ class Shop:
     def fill_inventory(self) -> None:
         available_space = self._capacity - len(self.inventory)
         if not len(self._stock) > 0:
-            raise Exception()
+            return
         new_stock = random.choices(self._stock, k=available_space)
 
         for item in new_stock:

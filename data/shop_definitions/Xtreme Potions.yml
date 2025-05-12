@@ -1,8 +1,10 @@
 filter:
-  filterType: [
-    Potion
-  ]
-  rarity: [
-    Very Rare,
-    Legendary
-  ]
+  keyParams:
+    filterType: [
+      Potion
+    ]
+    rarity: [
+      Very Rare,
+      Legendary
+    ]
+  name: Xtreme Potions

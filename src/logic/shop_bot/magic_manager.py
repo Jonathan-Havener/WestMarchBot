@@ -15,8 +15,15 @@ class MagicManager:
             item
             for item in self.items
             if all([
-                property in item and item[property] in item_filter[property]
-                for property in item_filter]
-            )
+                property in item and item[property] in item_filter.get("keyParams", []).get(property,[])
+                for property in item_filter.get("keyParams", [])
+                if item_filter.get("keyParams",[]).get(property, None)
+            ])
         ]
-        return filtered_items
+        # Filter by item name contains
+        items = [
+            item
+            for item in filtered_items
+            if item_filter.get("itemText", "").lower() in item["name"].lower()
+        ]
+        return items

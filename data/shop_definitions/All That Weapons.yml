@@ -1,4 +1,6 @@
 filter:
-  filterType: [
-    Weapon
-  ]
+  keyParams:
+    filterType: [
+      Weapon
+    ]
+  name: All That Weapons

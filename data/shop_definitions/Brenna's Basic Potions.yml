@@ -1,8 +1,10 @@
 filter:
-  filterType: [
-    Potion
-  ]
-  rarity: [
-    Common,
-    Uncommon
-  ]
+  keyParams:
+    filterType: [
+      Potion
+    ]
+    rarity: [
+      Common,
+      Uncommon
+    ]
+  name: Brenna's Basic Potions
