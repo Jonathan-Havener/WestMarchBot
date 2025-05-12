@@ -1,0 +1,7 @@
+filter:
+  keyParams:
+    filterType:
+    - Potion
+    rarity:
+    - Common
+  name: Brighthaven Brews

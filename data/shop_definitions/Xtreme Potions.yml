@@ -1,8 +1,0 @@
-filter:
-  filterType: [
-    Potion
-  ]
-  rarity: [
-    Very Rare,
-    Legendary
-  ]

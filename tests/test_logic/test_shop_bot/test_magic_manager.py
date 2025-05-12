@@ -13,23 +13,29 @@ class TestMagicManager(unittest.TestCase):
 
     def test_retrieval(self):
         num_items = len(self._manager.items)
-        self.assertEqual(1340, num_items)
+        self.assertEqual(1277, num_items)
 
         item_filter = {}
         items = self._manager.get_filtered_items(item_filter)
-        self.assertEqual(1340, len(items))
+        self.assertEqual(1277, len(items))
 
         item_filter = {
-            "rarity": ["Common", "Uncommon"]
+            "keyParams":{"rarity": ["Common", "Uncommon"]}
         }
         items = self._manager.get_filtered_items(item_filter)
         self.assertEqual(394, len(items))
 
         item_filter = {
-            "filterType": ["Weapon"],
+            "keyParams": {"filterType": ["Weapon"]}
         }
         items = self._manager.get_filtered_items(item_filter)
-        self.assertEqual(621, len(items))
+        self.assertEqual(584, len(items))
+
+        item_filter = {
+            "itemText": "sword"
+        }
+        items = self._manager.get_filtered_items(item_filter)
+        self.assertEqual(69, len(items))
 
 
 if __name__ == '__main__':
