@@ -5,59 +5,15 @@ from discord.ext import commands
 import discord
 from pathlib import Path
 
-from logic.shop_bot import Shop as ShopLogic
 from logic.shop_bot import ShopBuilder
 from logic.shop_bot import MagicManager
 
 from .shop_view import ShopView
 from .magic_item_embed import MagicItemEmbed
 from .create_shop_view import CreateShopView, FilterSession
-import asyncio
+from .shop_browser_view import ShopBrowserView
 
 import yaml
-
-from discord import ui, Embed
-
-
-class ShopFilterBrowser(ui.View):
-    def __init__(self, filters: list[tuple[str, dict]], *, timeout=180):
-        super().__init__(timeout=timeout)
-        self.filters = filters
-        self.index = 0
-        self.message = None
-
-    def format_embed(self):
-        name, data = self.filters[self.index]
-        filter_type = ", ".join(data.get("filterType", [])) or "None"
-        rarity = ", ".join(data.get("rarity", [])) or "None"
-
-        embed = Embed(
-            title=f"Shop Filter: {name}",
-            color=discord.Color.blue()
-        )
-        embed.add_field(name="Filter Type", value=filter_type, inline=False)
-        embed.add_field(name="Rarity", value=rarity, inline=False)
-        embed.set_footer(text=f"{self.index + 1} / {len(self.filters)}")
-        return embed
-
-    async def on_ready(self, message):
-        self.message = message
-        await message.edit(embed=self.format_embed(), view=self)
-
-    @ui.button(label="Previous", style=discord.ButtonStyle.secondary)
-    async def previous(self, interaction: discord.Interaction, button: ui.Button):
-        self.index = (self.index - 1) % len(self.filters)
-        await interaction.response.edit_message(embed=self.format_embed(), view=self)
-
-    @ui.button(label="Next", style=discord.ButtonStyle.secondary)
-    async def next(self, interaction: discord.Interaction, button: ui.Button):
-        self.index = (self.index + 1) % len(self.filters)
-        await interaction.response.edit_message(embed=self.format_embed(), view=self)
-
-    @ui.button(label="Close", style=discord.ButtonStyle.danger)
-    async def close(self, interaction: discord.Interaction, button: ui.Button):
-        await interaction.message.delete()
-        self.stop()
 
 
 class Shop(commands.Cog):
@@ -88,11 +44,11 @@ class Shop(commands.Cog):
             with open(file, "r") as f:
                 try:
                     data = yaml.safe_load(f)
-                    filters.append((file.stem, data.get("filter", {})))
+                    filters.append(data.get("filter", {}))
                 except Exception as e:
                     await ctx.send(f"Failed to read {file.name}: {e}")
 
-        view = ShopFilterBrowser(filters)
+        view = ShopBrowserView(filters, self.magic_manager)
         message = await ctx.send(embed=view.format_embed(), view=view)
         await view.on_ready(message)
 

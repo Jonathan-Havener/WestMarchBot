@@ -4,7 +4,6 @@ filter:
       Wondrous item
     ]
     rarity: [
-      Very Rare,
-      Legendary
+      Common
     ]
   name: Gnomish Gnovelties

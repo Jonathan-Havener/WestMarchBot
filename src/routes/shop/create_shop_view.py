@@ -48,29 +48,79 @@ class CreateShopView(ui.View):
         )
         embed.set_footer(text="Use the navigation buttons to change pages.")
 
-        # Shop Name
+        # Fields
         name_value = self.session.shop_name or "*Not set*"
         if self.page == "nameEntry":
             name_value += "  *(editing)*"
         embed.add_field(name="🛍️ Shop Name", value=name_value, inline=False)
 
-        # Item Name Filter
         text_value = self.session.item_text or "*No filter*"
         if self.page == "nameContains":
             text_value += "  *(editing)*"
         embed.add_field(name="🔍 Item Name Contains", value=text_value, inline=False)
 
-        # Filter Type
         type_value = ', '.join(sorted(self.session.filter_type)) or "*None selected*"
         if self.page == "filterType":
             type_value += "  *(editing)*"
         embed.add_field(name="📦 Item Types", value=type_value, inline=False)
 
-        # Rarities
         rarity_value = ', '.join(sorted(self.session.rarity)) or "*None selected*"
         if self.page == "rarity":
             rarity_value += "  *(editing)*"
         embed.add_field(name="✨ Rarities", value=rarity_value, inline=False)
+
+        # Explicit filter check before showing item list
+        filter_data = self.session.to_dict()["filter"]
+        key_params = filter_data.get("keyParams", {})
+        filter_type = key_params.get("filterType", [])
+        rarity = key_params.get("rarity", [])
+        item_text = filter_data.get("itemText", "")
+
+        has_filters = bool(item_text.strip()) or bool(filter_type) or bool(rarity)
+
+        if not has_filters:
+            embed.add_field(
+                name="📋 Matching Items",
+                value="*Apply filters to see matching items.*",
+                inline=False,
+            )
+
+        else:
+            filtered_items = self.magic_man.get_filtered_items(filter_data)
+            item_names = [item["name"] for item in filtered_items]
+
+            if not item_names:
+                embed.add_field(
+                    name="📋 Matching Items",
+                    value="*No items match your filters.*",
+                    inline=False,
+                )
+            else:
+                preview_lines = []
+                char_count = 0
+                for name in item_names:
+                    line = f"• {name}"
+                    if char_count + len(line) + 1 > 1000:
+                        break
+                    preview_lines.append(line)
+                    char_count += len(line) + 1
+
+                if not preview_lines:
+                    embed.add_field(
+                        name="📋 Matching Items",
+                        value=f"Too many items to show in preview. ({len(item_names)} items found)",
+                        inline=False,
+                    )
+                else:
+                    remaining = len(item_names) - len(preview_lines)
+                    value = "\n".join(preview_lines)
+                    if remaining > 0:
+                        value += f"\n… and {remaining} more"
+                    embed.add_field(
+                        name="📋 Matching Items",
+                        value=value,
+                        inline=False,
+                    )
 
         return embed
 
@@ -114,11 +164,6 @@ class CreateShopView(ui.View):
     async def done(self, interaction: discord.Interaction, button: ui.Button):
         pretty_yaml = self.session.to_pretty_yaml()
 
-        message = f"Here are the items that might appear in your shop!\n"
-        item_list = [item["name"] for item in self.magic_man.get_filtered_items(self.session.to_dict()["filter"])]
-        message += '\n'.join(item_list)
-        await interaction.response.send_message(message, ephemeral=True)
-
         message = f"Here's your shop filter YAML:\n{self.session.shop_name}\n```\n{pretty_yaml}```"
         bot = interaction.client
         admin = bot.get_user(int(os.environ.get("ADMIN_ID")))
@@ -128,6 +173,13 @@ class CreateShopView(ui.View):
             __file__).parent.parent.parent.parent / "data" / "shop_definitions" / f"{self.session.shop_name}.yml"
         with open(output_path, "w") as file:
             yaml.dump(self.session.to_dict(), file, sort_keys=False)
+
+        # Acknowledge completion and remove the view
+        await interaction.response.edit_message(
+            content=f"✅ `{self.session.shop_name}` shop saved!",
+            view=None,
+            embed=None
+        )
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         return True

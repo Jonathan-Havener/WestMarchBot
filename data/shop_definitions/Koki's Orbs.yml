@@ -1,8 +1,0 @@
-filter:
-  keyParams:
-    filterType: []
-    rarity:
-    - Common
-    - Uncommon
-  name: Koki's Orbs
-  itemText: Orb
