@@ -19,9 +19,8 @@ class CharacterSelectButton(discord.ui.Button):
         await interaction.response.defer()
 
         # Send message in thread with approval view
-        thread = await self.character.get_character_thread()
+        thread = await self.quest_manager.get_quest_thread()
         view = await JoinRequestView.create(self.quest_manager, thread.owner, self.character, self.message, self.embed)
-        # embed = view.build_embed()
 
         details = ''
 
