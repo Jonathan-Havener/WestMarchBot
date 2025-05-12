@@ -1,0 +1,11 @@
+filter:
+  keyParams:
+    filterType:
+    - Wondrous item
+    - Staff
+    - Ring
+    - Rod
+    rarity:
+    - Uncommon
+  name: Eugene's Uncommons
+  itemText: ''

@@ -1,0 +1,8 @@
+filter:
+  keyParams:
+    filterType:
+    - Armor
+    rarity:
+    - Common
+  name: Carl's Armor Parlor
+  itemText: ''
