@@ -79,8 +79,8 @@ class Shop(commands.Cog):
                 # if embed.title == shop.name and embed.author.name == "Brighthaven Marketplace":
                 if embed.title == shop.name:
                     view = ShopView(self.bot, shop, message=msg, embed=embed)
-                    self.bot.add_view(view)
-                    view.clear_items()
+                    # self.bot.add_view(view)
+                    await msg.edit(view=view)
                     logging.info(f"✅ Reconnected ShopView for '{shop.name}' in thread {thread.id}")
 
                 break
