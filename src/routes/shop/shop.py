@@ -14,6 +14,7 @@ from .create_shop_view import CreateShopView, FilterSession
 from .shop_browser_view import ShopBrowserView
 
 import yaml
+import re
 
 
 class Shop(commands.Cog):
@@ -25,8 +26,64 @@ class Shop(commands.Cog):
         self.shop_forum = self.bot.get_channel(int(os.environ.get("SHOPS_ID")))
 
         self.magic_manager = MagicManager(source=Path(__file__).parent.parent.parent.parent / "data" / "dmg-magic-item-definitions.json")
-        # self._shop = ShopLogic(magic_manager_obj=magic_manager)
-        # self._shop.fill_inventory()
+        # Reconnect views on bot restart
+        self.bot.loop.create_task(self._reconnect_shop_views())
+
+    def _get_listings_from_embed(self, embed):
+        listings = []
+        for field in embed.fields:
+
+            match = re.search(r"\*\*(.*?)\*\*", field.name)
+            item_name = match.group(1).strip() if match else field.name.strip()
+
+            item = next((
+                item
+                for item in self.magic_manager.items
+                if item["name"].lower() == item_name.lower()
+            ), None)
+            if item:
+                listings.append({
+                    "item": item,
+                    "price": self.magic_manager.get_price(item)
+                })
+
+        return listings
+
+    async def _reconnect_shop_views(self):
+        await self.bot.wait_until_ready()
+
+        shop_definitions = Path(__file__).parent.parent.parent.parent / "data" / "shop_definitions"
+        shops = ShopBuilder().build_shops(shop_definitions)
+
+        for shop in shops:
+            thread = next((t for t in self.shop_forum.threads if t.name == shop.name), None)
+            if not thread:
+                continue
+
+            # Check the latest messages in the thread
+            async for msg in thread.history(limit=None):
+                if not msg.embeds or msg.author != self.bot.user:
+                    continue
+
+                listings = self._get_listings_from_embed(msg.embeds[0])
+                shop.inventory = listings
+
+                embed = MagicItemEmbed(
+                    title=msg.embeds[0].title,
+                    description=msg.embeds[0].description,
+                    color=msg.embeds[0].color,
+                    listings=listings
+                )
+
+                # Match on embed title and author
+                # if embed.title == shop.name and embed.author.name == "Brighthaven Marketplace":
+                if embed.title == shop.name:
+                    view = ShopView(self.bot, shop, message=msg, embed=embed)
+                    self.bot.add_view(view)
+                    view.clear_items()
+                    logging.info(f"✅ Reconnected ShopView for '{shop.name}' in thread {thread.id}")
+
+                break
 
     @commands.command(
         help="Open a paginated browser of existing shop filters."

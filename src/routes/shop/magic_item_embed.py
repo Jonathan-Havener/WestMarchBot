@@ -5,8 +5,8 @@ class MagicItemEmbed(discord.Embed):
     def __init__(self, title, description, color, listings):
         super().__init__(title=title, description=description, color=color)
         # Set the footer, author, and thumbnail (optional)
-        self.set_footer(text="Good luck, adventurer!")
-        self.set_author(name="Verdelume Guild")
+        self.set_footer(text="Come again soon!")
+        self.set_author(name="Brighthaven Marketplace")
         self.set_thumbnail(url="https://example.com/dragon_thumbnail.png")  # Replace with an actual image URL
 
         self._items = []

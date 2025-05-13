@@ -3,9 +3,12 @@ import asyncio
 from datetime import datetime
 import logging
 
+from dotenv import load_dotenv
+if not os.getenv("ENV"):
+    load_dotenv(dotenv_path=".env.test")
+
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
 
 from properties.config import PREFIX
 # add the cogs context for calls to __subclasses__
@@ -13,8 +16,7 @@ from routes import *
 from routines.player_signup import PlayerSignup
 from role_logger import *
 
-if not os.getenv("ENV"):
-    load_dotenv(dotenv_path=".env.test")
+
 
 TOKEN = os.environ.get("API_TOKEN")
 intents = discord.Intents.all()
