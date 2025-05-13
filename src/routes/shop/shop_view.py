@@ -56,7 +56,7 @@ class ReceiptSelect(Select):
 
 
 class ShopView(ui.View):
-    def __init__(self, bot, shop_logic, message, embed, timeout=60*60*24):
+    def __init__(self, bot, shop_logic, message, embed, timeout=None):
         super().__init__(timeout=timeout)
         self.bot = bot
         self.shop = shop_logic
@@ -69,8 +69,8 @@ class ShopView(ui.View):
         for idx, listing in enumerate(self.shop.inventory):
             label = f"Purchase {listing['item']['name'].title()}"
 
-            async def button_callback(interaction):
-                await self.interaction_handler(interaction)
+            async def button_callback(interaction, index=idx):
+                await self.interaction_handler(interaction, index)
 
             button = ui.Button(label=label, style=discord.ButtonStyle.primary, custom_id=str(idx))
             button.callback = button_callback
@@ -88,7 +88,7 @@ class ShopView(ui.View):
     async def on_error(self, interaction: discord.Interaction, error: Exception, item: ui.Item):
         await interaction.response.send_message("An error occurred.", ephemeral=True)
 
-    async def interaction_handler(self, interaction: discord.Interaction):
+    async def interaction_handler(self, interaction: discord.Interaction, index: int):
         try:
             index = int(interaction.data['custom_id'])
             listing = self.shop.inventory[index]
@@ -97,7 +97,7 @@ class ShopView(ui.View):
 
             # Update shop inventory
             self.shop.sell(item_name)
-            self.embed.items = [item for item in self.embed.items if item['item']["name"] != item_name]
+            self.embed.items = self.shop.inventory
 
             # Refresh buttons after inventory changes
             self.update_buttons()
