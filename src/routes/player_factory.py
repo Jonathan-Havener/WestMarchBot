@@ -18,6 +18,8 @@ class PlayerFactory(commands.Cog):
 
         if not player_cog:
             player_cog = Player(self.bot, player_id)
+            # Load the player's characters
+            await player_cog.character_cogs()
             await self.bot.add_cog(player_cog)
             created = True
 

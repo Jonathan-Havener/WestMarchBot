@@ -2,9 +2,6 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-if not os.getenv("ENV"):
-    load_dotenv(dotenv_path=".env.test")
-
 GUILD_ID = int(os.environ.get("SERVER_ID"))
 QUEST_CHANNEL_ID = int(os.environ.get("QUEST_BOARD_ID"))  # Replace with your category ID
 bot_updates_channel_id = int(os.environ.get("BOT_UPDATES_ID"))
