@@ -41,10 +41,14 @@ class PlayerCharacter(commands.Cog):
         if not was_updated:
             await this_thread.send(f"{this_thread.name} hit level {current_level}! Congrats :)")
 
-        self.bastion = await Bastion.create(owner=self)
-        self.bastion_view = await AboutBastionView.create(self.bastion)
-        await this_thread.send(embed=self.bastion_view.initial_embed(),
-                               view=self.bastion_view)
+        thread = await self.get_character_thread()
+        sidequest_server = bot.get_guild(int(os.environ.get("SERVER_ID")))
+        dm_role = sidequest_server.get_role(int(os.environ.get("DM_ROLE_ID")))
+        if dm_role in thread.owner.roles:
+            self.bastion = await Bastion.create(owner=self)
+            self.bastion_view = await AboutBastionView.create(self.bastion)
+            await this_thread.send(embed=self.bastion_view.initial_embed(),
+                                   view=self.bastion_view)
 
         return self
 
