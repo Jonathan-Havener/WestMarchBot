@@ -18,19 +18,24 @@ class BastionView(discord.ui.View):
     async def create(cls, bastion):
         self = cls(bastion)
 
-        if not bastion.options:
+        await self._add_facility_selection_buttons()
+
+        return self
+
+    async def _add_facility_selection_buttons(self):
+        available_facilities = await self.bastion.get_available_facilities()
+
+        if not available_facilities:
             return self  # No facilities to show
 
         # Set default selected facility
-        self.selected_facility = bastion.options[0]
+        self.selected_facility = next(iter(available_facilities))
 
         # Preload embeds for each facility
-        for facility in bastion.options:
+        for facility in iter(available_facilities):
             embed = await SpecialFacilityInfoEmbed.create(facility, self.owner)
             self.embeds[facility] = embed
 
-        # Add buttons for each facility
-        for facility in bastion.options:
             button = self._make_facility_button(facility)
             self.facility_buttons[facility] = button
             self.add_item(button)
@@ -42,8 +47,6 @@ class BastionView(discord.ui.View):
         self.add_item(self.add_button)
 
         await self._update_button_styles()
-
-        return self
 
     async def add_callback(self, interaction: discord.Interaction):
         view = await SpecialFacilityView.create(self.selected_facility, self.bastion.owner)
