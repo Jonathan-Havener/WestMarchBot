@@ -5,8 +5,7 @@ from discord.ext import commands
 import discord
 
 from logic.bastion.bastion import Bastion
-from views.bastion.bastion_view import BastionConstructionView
-from views.bastion.about_bastion_view import AboutBastionView
+from views.bastion.bastion_view import BastionConstructionView, AboutBastionView
 
 
 class PlayerCharacter(commands.Cog):
