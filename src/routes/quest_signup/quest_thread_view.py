@@ -26,7 +26,7 @@ class SignupButton(ui.Button):
 
     async def callback(self, interaction: Interaction):
         player_cog, _ = await self.quest_manager.player_factory.get_cog(interaction.user.id)
-        player_characters = await player_cog.character_cogs()
+        player_characters = await player_cog.active_character_cogs()
 
         embed = discord.Embed(
             title="Who would you like to play?",

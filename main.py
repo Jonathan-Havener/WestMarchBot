@@ -17,7 +17,6 @@ from routines.player_signup import PlayerSignup
 from role_logger import *
 
 
-
 TOKEN = os.environ.get("API_TOKEN")
 intents = discord.Intents.all()
 intents.members = True
@@ -29,6 +28,7 @@ bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
 player_fact = PlayerFactory(bot)
 quest_fact = QuestFactory(bot, player_fact)
+
 
 @bot.event
 async def on_ready():

@@ -4,6 +4,9 @@ import os
 from discord.ext import commands
 import discord
 
+from logic.bastion.bastion import Bastion
+from views.bastion.bastion_view import BastionConstructionView, AboutBastionView
+
 
 class PlayerCharacter(commands.Cog):
     def __init__(self, bot, profile_id: int, player_cog):
@@ -27,18 +30,36 @@ class PlayerCharacter(commands.Cog):
         self = cls(bot, profile_id, player_cog)
         await self._populate_quest_history()
 
-        current_level = await self.level()
         this_thread = await self.get_character_thread()
 
-        was_updated = [
-            msg
-            async for msg in this_thread.history(limit=None)
-            if f"hit level {current_level}" in msg.content
-        ]
-        if not was_updated:
-            await this_thread.send(f"{this_thread.name} hit level {current_level}! Congrats :)")
+        is_active_player = await self.is_active_player()
+        if is_active_player:
+            current_level = await self.level()
+
+            was_updated = [
+                msg
+                async for msg in this_thread.history(limit=None)
+                if f"hit level {current_level}" in msg.content
+            ]
+            if not was_updated:
+                await this_thread.send(f"{this_thread.name} hit level {current_level}! Congrats :)")
+
+            sidequest_server = bot.get_guild(int(os.environ.get("SERVER_ID")))
+            dm_role = sidequest_server.get_role(int(os.environ.get("DM_ROLE_ID")))
+            if dm_role in this_thread.owner.roles:
+                self.bastion = await Bastion.create(owner=self)
+                self.bastion_view = await AboutBastionView.create(self.bastion)
+                await this_thread.send(embed=self.bastion_view.initial_embed(),
+                                       view=self.bastion_view)
 
         return self
+
+    async def is_active_player(self):
+        thread = await self.get_character_thread()
+        tag_names = [tag.name for tag in thread.applied_tags]
+        if "Departed" in tag_names or "NPC" in tag_names or "Pregen" in tag_names:
+            return False
+        return True
 
     async def _get_quests_from_msg(self, message) -> list[discord.Thread]:
         """

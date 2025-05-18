@@ -121,7 +121,10 @@ class ApproveButton(discord.ui.Button):
         if user in self.quest_manager.waitlisted_users:
             self.quest_manager.waitlisted_users.remove(user)
 
+        char_name = (await user.get_character_thread()).name
+
         await interaction.response.defer()
+        await interaction.followup.send(f"{char_name} approved for quest!", ephemeral=True)
         await self.parent_view.update_message()
 
 
@@ -142,5 +145,8 @@ class WaitlistButton(discord.ui.Button):
         if user in self.quest_manager.approved_users:
             self.quest_manager.approved_users.remove(user)
 
+        char_name = (await user.get_character_thread()).name
+
         await interaction.response.defer()
+        await interaction.followup.send(f"{char_name} waitlisted.", ephemeral=True)
         await self.parent_view.update_message()
