@@ -65,7 +65,7 @@ class Player(commands.Cog):
         char_cogs = await self.character_cogs()
         active_chars = []
         for char in char_cogs:
-            is_active = await cog.is_active_player()
+            is_active = await char.is_active_player()
             if is_active:
                 active_chars.append(char)
 

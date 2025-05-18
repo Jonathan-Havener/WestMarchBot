@@ -19,6 +19,6 @@ class CharacterSelectionView(discord.ui.View):
             thread = await character.get_character_thread()
             self.add_item(CharacterSelectButton(quest_manager, character, thread.name, user, self.message, self.embed))
 
-        self.add_item(CancelButton(user))
+        # self.add_item(CancelButton(user))
         return self
 
