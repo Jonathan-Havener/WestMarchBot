@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 import discord
 from discord.ext import commands
@@ -11,19 +12,25 @@ class PlayerFactory(commands.Cog):
         self.bot = bot
 
         self.brighthaven_category_id = int(os.environ.get("BRIGHTHAVEN_CATEGORY_ID"))
+        self._locks = {}
+
+    def _get_lock(self, quest_id: str) -> asyncio.Lock:
+        return self._locks.setdefault(quest_id, asyncio.Lock())
 
     async def get_cog(self, player_id: str):
-        player_cog = self.bot.get_cog(f"Player-{player_id}")
-        created = False
+        lock = self._get_lock(player_id)
+        async with lock:
+            player_cog = self.bot.get_cog(f"Player-{player_id}")
+            created = False
 
-        if not player_cog:
-            player_cog = Player(self.bot, player_id)
-            # Load the player's characters
-            await player_cog.character_cogs()
-            await self.bot.add_cog(player_cog)
-            created = True
+            if not player_cog:
+                player_cog = Player(self.bot, player_id)
+                # Load the player's characters
+                await player_cog.character_cogs()
+                await self.bot.add_cog(player_cog)
+                created = True
 
-        return player_cog, created
+            return player_cog, created
 
     @commands.Cog.listener(name="on_message")
     async def _player_message(self, message: discord.Message):
