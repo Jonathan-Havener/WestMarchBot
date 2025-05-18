@@ -56,6 +56,21 @@ class Player(commands.Cog):
 
         return self._player_cogs
 
+    async def active_character_cogs(self) -> list[PlayerCharacter]:
+        """
+        lazy loads the player's characters
+        :return:
+        :rtype:
+        """
+        char_cogs = await self.character_cogs()
+        active_chars = []
+        for char in char_cogs:
+            is_active = await cog.is_active_player()
+            if is_active:
+                active_chars.append(char)
+
+        return active_chars
+
     @commands.Cog.listener(name="on_thread_create")
     async def handle_create_character(self, thread: discord.Thread):
         """
