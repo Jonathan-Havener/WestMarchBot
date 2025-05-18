@@ -5,7 +5,8 @@ from discord.ext import commands
 import discord
 
 from logic.bastion.bastion import Bastion
-from views.bastion.bastion_view import BastionView
+from views.bastion.bastion_view import BastionConstructionView
+from views.bastion.about_bastion_view import AboutBastionView
 
 
 class PlayerCharacter(commands.Cog):
@@ -42,8 +43,8 @@ class PlayerCharacter(commands.Cog):
             await this_thread.send(f"{this_thread.name} hit level {current_level}! Congrats :)")
 
         self.bastion = await Bastion.create(owner=self)
-        self.bastion_view = await BastionView.create(self.bastion)
-        await this_thread.send(embed=self.bastion_view.embeds.get(self.bastion_view.selected_facility),
+        self.bastion_view = await AboutBastionView.create(self.bastion)
+        await this_thread.send(embed=self.bastion_view.initial_embed(),
                                view=self.bastion_view)
 
         return self

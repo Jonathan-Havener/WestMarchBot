@@ -1,11 +1,13 @@
 from .arcane_study import ArcaneStudy
 from .armory import Armory
+from .barrack import Barrack
 from .gaming_hall import GamingHall
 from .garden import Garden
 from .greenhouse import Greenhouse
 from .laboratory import Laboratory
 from .library import Library
 from .sacristy import Sacristy
+from .sanctuary import Sanctuary
 from .scriptorium import Scriptorium
 from .smithy import Smithy
 from .stable import Stable
@@ -36,7 +38,7 @@ class Bastion:
 
         return self
 
-    async def _get_num_facilities_needing_construction(self):
+    async def get_num_facilities_needing_construction(self):
         num_special_allowed = 0
         char_level = await self.owner.level()
         if char_level >= 5:
@@ -47,7 +49,7 @@ class Bastion:
         return num_left
 
     async def get_available_facilities(self) -> []:
-        num_needed = await self._get_num_facilities_needing_construction()
+        num_needed = await self.get_num_facilities_needing_construction()
 
         if num_needed <= 0:
             return []
