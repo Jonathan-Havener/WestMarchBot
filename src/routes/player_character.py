@@ -4,6 +4,9 @@ import os
 from discord.ext import commands
 import discord
 
+from logic.bastion.bastion import Bastion
+from views.bastion.bastion_view import BastionView
+
 
 class PlayerCharacter(commands.Cog):
     def __init__(self, bot, profile_id: int, player_cog):
@@ -37,6 +40,11 @@ class PlayerCharacter(commands.Cog):
         ]
         if not was_updated:
             await this_thread.send(f"{this_thread.name} hit level {current_level}! Congrats :)")
+
+        self.bastion = await Bastion.create(owner=self)
+        self.bastion_view = await BastionView.create(self.bastion)
+        await this_thread.send(embed=self.bastion_view.embeds.get(self.bastion_view.selected_facility),
+                               view=self.bastion_view)
 
         return self
 

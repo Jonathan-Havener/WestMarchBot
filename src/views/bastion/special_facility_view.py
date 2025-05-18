@@ -1,13 +1,12 @@
 import discord
 
-from logic.bastion.arcane_study import ArcaneStudy
 from logic.bastion.choice import Choice
 from views.bastion.choice_embed import ChoiceEmbed
 from views.bastion.special_facility_info_embed import SpecialFacilityInfoEmbed
 
 
 class SpecialFacilityView(discord.ui.View):
-    def __init__(self, facility: "ArcaneStudy", owner):
+    def __init__(self, facility, owner):
         super().__init__(timeout=None)
         self.facility = facility
         self.owner = owner
@@ -17,7 +16,7 @@ class SpecialFacilityView(discord.ui.View):
         self.info_view_btn = None      # Will hold reference to Info View button
 
     @classmethod
-    async def create(cls, facility: "ArcaneStudy", owner):
+    async def create(cls, facility, owner):
         self = cls(facility, owner)
         self.main_view = await SpecialFacilityInfoEmbed.create(facility, owner)
 

@@ -1,5 +1,5 @@
 from logic.bastion.choice import Choice
-from views.bastion.special_facility_base_view import SpecialFacilityBaseEmbed
+from views.bastion.special_facility_base_embed import SpecialFacilityBaseEmbed
 
 
 class ChoiceEmbed(SpecialFacilityBaseEmbed):
